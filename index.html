@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>만두집 뽑기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FAF3E4;
+    --paper:#FFFDF8;
+    --ink:#2B2420;
+    --ink-soft:#6b6156;
+    --line:#E7DCC7;
+    --bamboo:#6B8F71;
+    --bamboo-dark:#4f6d55;
+    --chili:#C1440E;
+    --chili-dark:#9c360b;
+    --gold:#E0A458;
+    --common:#7C9885;
+    --common-bg:#EAF1EC;
+    --rare:#3E7CB1;
+    --rare-bg:#E7F1FA;
+    --legend:#C1440E;
+    --legend-bg:#FBEAE0;
+    --shadow: 0 4px 14px rgba(43,36,32,0.10);
+    /* 단계별 테마 색상 - JS에서 단계가 바뀔 때마다 덮어씌워짐 */
+    --stage-a:#6B8F71;
+    --stage-b:#4f6d55;
+    --stage-bg:#FAF3E4;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;
+    height:100%;
+    overflow:hidden;               /* 바깥(뷰포트) 스크롤/바운스 차단 */
+    overscroll-behavior:none;      /* 당겨서 새로고침 등 브라우저 제스처 차단 */
+    touch-action:pan-y;            /* 세로 스크롤은 허용하되 핀치줌은 차단 */
+    -webkit-text-size-adjust:100%;
+  }
+  body{
+    background:
+      radial-gradient(circle at 15% 0%, #fff8ec 0%, transparent 45%),
+      var(--cream);
+    color:var(--ink);
+    font-family:'Noto Sans KR', sans-serif;
+    position:fixed;
+    inset:0;
+    width:100%;
+  }
+  h1,h2,h3, .display{ font-family:'Jua','Noto Sans KR',sans-serif; font-weight:400; }
+  #app{
+    max-width:720px; margin:0 auto;
+    padding:14px 14px calc(84px + env(safe-area-inset-bottom));
+    height:100%;
+    overflow-y:auto;               /* 실제 콘텐츠 스크롤은 #app 내부에서만 */
+    overflow-x:hidden;
+    overscroll-behavior-y:contain;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px; padding:10px 4px 12px;
+  }
+  .brand{ display:flex; align-items:center; gap:8px; }
+  .brand .badge-dot{ width:10px;height:10px;border-radius:50%; background:var(--chili); box-shadow:0 0 0 3px var(--legend-bg);}
+  .brand h1{ font-size:22px; margin:0; letter-spacing:0.5px; color:var(--ink); }
+  .brand .sub{ font-size:11px; color:var(--ink-soft); margin-top:-2px; }
+  .stats{ display:flex; gap:8px; }
+  .stat-pill{
+    display:flex; align-items:center; gap:6px;
+    background:var(--paper); border:1.5px solid var(--line); border-radius:999px;
+    padding:6px 12px 6px 8px; box-shadow:var(--shadow); font-weight:700; font-size:14px;
+    white-space:nowrap;
+  }
+  .stat-pill .ic{ color:var(--gold); display:flex; }
+  .stat-pill.ticket .ic{ color:var(--chili); }
+
+  .stage-strip{
+    display:flex; align-items:center; justify-content:space-between;
+    background:linear-gradient(90deg, var(--stage-a), var(--stage-b));
+    color:#fff; border-radius:14px; padding:10px 16px; margin-bottom:14px;
+    box-shadow:var(--shadow); transition:background .4s ease;
+  }
+  .stage-strip .st-title{ font-family:'Jua'; font-size:16px; }
+  .stage-strip .st-desc{ font-size:11.5px; opacity:0.85; margin-top:2px;}
+  .stage-strip .st-num{
+    font-family:'Jua'; font-size:26px; background:rgba(255,255,255,0.18);
+    border-radius:10px; padding:2px 12px;
+  }
+
+  /* ---------- Hero: steamer ---------- */
+  .hero{
+    position:relative;
+    background: var(--paper);
+    border:1.5px solid var(--line);
+    border-radius:22px;
+    padding:26px 20px 18px;
+    text-align:center;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    margin-bottom:14px;
+  }
+  .hero::before{ /* woven bamboo rim */
+    content:'';
+    position:absolute; left:0; right:0; top:0; height:10px;
+    background: repeating-linear-gradient(90deg, var(--bamboo) 0 10px, var(--bamboo-dark) 10px 20px);
+    opacity:0.9;
+  }
+  .steam-wrap{ position:relative; height:60px; margin-bottom:-18px; }
+  .steam-puff{
+    position:absolute; bottom:0; width:16px; height:26px; border-radius:50%;
+    background:rgba(255,255,255,0.85); filter:blur(5px);
+    animation:steamRise 3.2s ease-in infinite;
+  }
+  @keyframes steamRise{
+    0%{ transform:translateY(0) scale(0.8); opacity:0; }
+    18%{ opacity:0.55; }
+    100%{ transform:translateY(-70px) scale(1.7); opacity:0; }
+  }
+  .basket{
+    position:relative; width:220px; height:190px; margin:0 auto;
+  }
+  .basket-ring{
+    position:absolute; left:50%; top:100%; transform:translate(-50%,-14px);
+    width:230px; height:26px; border-radius:50%;
+    background: repeating-linear-gradient(90deg, var(--stage-a) 0 8px, var(--stage-b) 8px 16px);
+    box-shadow: 0 6px 0 rgba(0,0,0,0.06); transition:background .4s ease;
+  }
+  .dumpling-wrap{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent;
+  }
+  .hero-backdrop{
+    position:absolute; width:180px; height:180px; border-radius:50%;
+    background: var(--stage-bg);
+    box-shadow: 0 14px 22px -6px rgba(43,36,32,0.28), inset 0 0 0 1px rgba(43,36,32,0.04);
+    transition:background .4s ease;
+  }
+  .dumpling-wrap img{
+    position:relative; width:172px; height:172px; object-fit:contain;
+    mix-blend-mode:multiply;
+    transition: transform .15s ease;
+  }
+  .dumpling-wrap:active img{ transform:scale(0.97); }
+  @keyframes squish{
+    0%{ transform:scale(1); }
+    28%{ transform:scale(0.82,1.18); }
+    52%{ transform:scale(1.12,0.9); }
+    75%{ transform:scale(0.95,1.05); }
+    100%{ transform:scale(1); }
+  }
+  .squish{ animation: squish .38s ease; }
+  .hero-hint{ margin-top:8px; font-size:12px; color:var(--ink-soft); }
+  .float-layer{ position:absolute; inset:0; pointer-events:none; }
+  .float-coin{
+    position:absolute; font-family:'Jua'; font-weight:400; color:var(--chili);
+    font-size:16px; animation: floatUp .9s ease-out forwards; pointer-events:none;
+  }
+  .float-coin.crit{ color:var(--gold); font-size:22px; text-shadow:0 0 8px rgba(224,164,88,0.6); }
+  @keyframes floatUp{
+    0%{ transform:translateY(0); opacity:1; }
+    100%{ transform:translateY(-64px); opacity:0; }
+  }
+  .per-click{ position:absolute; top:10px; right:16px; font-size:11px; color:var(--ink-soft); background:var(--common-bg); border-radius:8px; padding:3px 8px;}
+
+  /* ---------- Tabs (bottom fixed nav) ---------- */
+  .tabs{
+    position:fixed; left:0; right:0; bottom:0; z-index:80;
+    display:flex; gap:6px;
+    max-width:720px; margin:0 auto;
+    background:rgba(255,253,248,0.92); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    border-top:1.5px solid var(--line);
+    padding:9px 12px calc(9px + env(safe-area-inset-bottom));
+    box-shadow:0 -8px 24px rgba(43,36,32,0.10);
+  }
+  .tab-btn{
+    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+    background:transparent; border:none; border-radius:12px;
+    padding:6px 4px 5px; font-family:'Noto Sans KR'; font-weight:700; font-size:10.5px;
+    color:var(--ink-soft); cursor:pointer; transition:all .15s ease;
+  }
+  .tab-btn svg{ width:19px; height:19px; transition:transform .15s ease; }
+  .tab-btn.active{ background:var(--ink); color:#fff; box-shadow:var(--shadow); }
+  .tab-btn.active svg{ transform:translateY(-1px) scale(1.05); }
+  .tab-btn:active svg{ transform:scale(0.9); }
+
+  .panel{
+    background:var(--paper); border:1.5px solid var(--line); border-radius:18px;
+    padding:16px; box-shadow:var(--shadow); min-height:200px;
+  }
+  .panel h2{ margin:0 0 4px; font-size:18px; }
+  .panel .lead{ font-size:12px; color:var(--ink-soft); margin-bottom:14px; }
+
+  /* ---------- Gacha cards ---------- */
+  .gacha-card{
+    display:flex; flex-direction:column; gap:10px;
+    border:1.5px solid var(--line); border-radius:14px; padding:12px 14px; margin-bottom:10px;
+    background:linear-gradient(180deg, #fff, #fffaf1);
+  }
+  .gacha-card-top{ display:flex; align-items:center; gap:14px; }
+  .g-actions{ display:flex; gap:8px; }
+  .g-actions .btn{ flex:1; }
+  .btn-sm{ font-size:11px; padding:8px 6px; white-space:normal; line-height:1.3; }
+  .gacha-card .g-icon{
+    width:52px;height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:var(--common-bg); color:var(--bamboo-dark); flex-shrink:0;
+  }
+  .gacha-card.ticket .g-icon{ background:var(--legend-bg); color:var(--chili); }
+  .gacha-card.ticket.legend .g-icon{ background:linear-gradient(135deg,var(--gold),var(--chili)); color:#fff; }
+  .gacha-card .g-owned{ font-weight:700; font-size:10.5px; color:var(--ink-soft); background:var(--common-bg); border-radius:999px; padding:1px 8px; margin-left:6px; }
+  .mileage-strip{ display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+  .mileage-pill{
+    display:flex; align-items:center; gap:5px; font-size:11.5px; font-weight:700;
+    border-radius:999px; padding:6px 12px; background:var(--common-bg); color:var(--common);
+  }
+  .mileage-pill.rare{ background:var(--rare-bg); color:var(--rare); }
+  .mileage-pill b{ color:var(--ink); font-family:'Jua'; font-weight:400; }
+
+  /* ---------- Gacha category hamburger menu ---------- */
+  .gacha-cat-select{ position:relative; margin-bottom:12px; }
+  .cat-hamburger{
+    width:100%; display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:12px 14px; border-radius:14px; border:1.5px solid var(--line); background:#fff;
+    font-family:'Noto Sans KR'; font-weight:700; font-size:14px; color:var(--ink); cursor:pointer;
+    box-shadow:var(--shadow);
+  }
+  .cat-hb-left{ display:flex; align-items:center; gap:10px; }
+  .cat-hamburger svg{ flex-shrink:0; color:var(--stage-a); }
+  .cat-menu{
+    position:absolute; top:calc(100% + 8px); left:0; right:0; z-index:60;
+    background:var(--paper); border:1.5px solid var(--line); border-radius:16px;
+    box-shadow:0 14px 30px rgba(43,36,32,0.18); padding:8px; max-height:280px; overflow-y:auto;
+    display:none;
+  }
+  .cat-menu.open{ display:block; }
+  .cat-menu-item{
+    width:100%; display:flex; align-items:center; justify-content:space-between; gap:8px;
+    padding:11px 12px; border-radius:12px; border:none; background:transparent;
+    font-family:'Noto Sans KR'; font-weight:700; font-size:13.5px; color:var(--ink); cursor:pointer;
+    text-align:left;
+  }
+  .cat-menu-item:not(:last-child){ margin-bottom:2px; }
+  .cat-menu-item:hover{ background:var(--common-bg); }
+  .cat-menu-item.active{ background:var(--stage-a); color:#fff; }
+  .cat-item-tag{ font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; background:rgba(0,0,0,0.08); }
+  .cat-menu-item.active .cat-item-tag{ background:rgba(255,255,255,0.25); }
+  .cat-item-tag.past{ background:var(--legend-bg); color:var(--legend); }
+  .cat-menu-item.active .cat-item-tag.past{ background:rgba(255,255,255,0.25); color:#fff; }
+
+  /* ---------- Coin shortage warning ---------- */
+  .coin-warning{
+    display:flex; align-items:flex-start; gap:10px; background:#FDE8E4; color:#8a2f10;
+    border:1.5px solid var(--chili); border-radius:14px; padding:12px 14px; margin-bottom:12px;
+    font-size:12.5px; font-weight:700; line-height:1.5;
+  }
+  .coin-warning svg{ flex-shrink:0; color:var(--chili); margin-top:1px; }
+
+  /* ---------- Mileage board (bigger, per-category) ---------- */
+  .mileage-board{
+    background:linear-gradient(135deg, var(--stage-bg), #fff);
+    border:1.5px solid var(--line); border-radius:18px; padding:14px 16px 16px; margin-bottom:14px;
+    box-shadow:var(--shadow); transition:background .4s ease;
+  }
+  .mb-title{ font-size:12px; font-weight:700; color:var(--ink-soft); margin-bottom:10px; }
+  .mb-row{ display:flex; gap:10px; }
+  .mb-item{
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:2px;
+    background:#fff; border:1.5px solid var(--line); border-radius:14px; padding:12px 10px;
+  }
+  .mb-item svg{ width:18px; height:18px; margin-bottom:2px; }
+  .mb-item.common svg{ color:var(--common); }
+  .mb-item.rare svg{ color:var(--rare); }
+  .mb-num{ font-family:'Jua'; font-size:28px; line-height:1; color:var(--ink); }
+  .mb-item.common .mb-num{ color:var(--common); }
+  .mb-item.rare .mb-num{ color:var(--rare); }
+  .mb-label{ font-size:11px; font-weight:700; color:var(--ink-soft); margin-top:2px; }
+
+  .gacha-card .g-body{ flex:1; }
+  .gacha-card .g-title{ font-weight:700; font-size:14.5px; margin-bottom:2px; }
+  .gacha-card .g-odds{ font-size:11px; color:var(--ink-soft); }
+  .btn{
+    border:none; border-radius:10px; padding:9px 16px; font-weight:700; font-size:13px;
+    cursor:pointer; font-family:'Noto Sans KR'; transition:transform .1s ease, opacity .15s;
+    white-space:nowrap;
+  }
+  .btn:active{ transform:scale(0.96); }
+  .btn-primary{ background:var(--chili); color:#fff; }
+  .btn-primary:disabled{ background:#d8cfc0; color:#948a7c; cursor:not-allowed; }
+  .btn-ghost{ background:var(--ink); color:#fff; }
+  .btn-ghost:disabled{ background:#d8cfc0; color:#948a7c; cursor:not-allowed; }
+  .btn-outline{ background:transparent; border:1.5px solid var(--line); color:var(--ink); }
+
+  .craft-row{
+    display:flex; align-items:center; gap:12px; border:1.5px dashed var(--line);
+    border-radius:14px; padding:12px 14px;
+  }
+  .craft-row .prog{ flex:1; }
+  .prog-bar{ height:8px; background:var(--common-bg); border-radius:999px; overflow:hidden; margin-top:6px;}
+  .prog-fill{ height:100%; background:var(--bamboo); border-radius:999px; transition:width .3s ease;}
+
+  /* ---------- Dex ---------- */
+  .dex-tabs{ display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
+  .dex-tab{
+    font-size:11.5px; font-weight:700; padding:6px 12px; border-radius:999px;
+    border:1.5px solid var(--line); background:#fff; color:var(--ink-soft); cursor:pointer;
+  }
+  .dex-tab.active{ background:var(--bamboo); color:#fff; border-color:var(--bamboo); }
+  .dex-progress{ font-size:11.5px; color:var(--ink-soft); margin-bottom:10px; }
+  .dex-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(84px,1fr)); gap:10px;
+  }
+  .dex-item{
+    border:1.5px solid var(--line); border-radius:12px; padding:8px 6px 10px; text-align:center;
+    background:#fff; position:relative;
+  }
+  .dex-thumb-wrap{ position:relative; width:56px; height:56px; margin:0 auto 6px; }
+  .thumb-circle{ position:relative; z-index:2; }
+  .blend-photo{ mix-blend-mode:multiply; }
+  .lock-badge{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:3; color:#fff; }
+  .ring{ position:absolute; inset:-4px; border-radius:50%; z-index:1; }
+  .ring.rare{ background:conic-gradient(from 0deg, var(--rare), #a9d8ff, var(--rare)); animation:spin 3s linear infinite; opacity:0.9;}
+  .ring.legendary{ background:conic-gradient(from 0deg, var(--gold), var(--chili), var(--gold)); animation:spin 2.2s linear infinite; opacity:0.95;}
+  @keyframes spin{ to{ transform:rotate(360deg);} }
+  .dex-name{ font-size:11px; font-weight:700; margin-top:2px; line-height:1.2; }
+  .dex-rarity{ font-size:9.5px; font-weight:700; border-radius:999px; padding:1px 7px; display:inline-block; margin-top:4px;}
+  .dex-rarity.common{ background:var(--common-bg); color:var(--common); }
+  .dex-rarity.rare{ background:var(--rare-bg); color:var(--rare); }
+  .dex-rarity.legendary{ background:var(--legend-bg); color:var(--legend); }
+  .dex-count{ position:absolute; top:4px; right:6px; font-size:9.5px; font-weight:700; background:var(--ink); color:#fff; border-radius:999px; padding:1px 6px; z-index:4;}
+  .btn-equip{
+    margin-top:6px; font-size:9.5px; font-weight:700; padding:3px 9px; border-radius:999px;
+    border:1.5px solid var(--bamboo); background:#fff; color:var(--bamboo-dark); cursor:pointer;
+  }
+  .btn-equip.active{ background:var(--bamboo); color:#fff; }
+  .dex-item.equipped{ border-color:var(--gold); box-shadow:0 0 0 2px var(--gold) inset; }
+
+  /* ---------- Fuse ---------- */
+  .fuse-summary{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;}
+  .fuse-summary .num{ font-family:'Jua'; font-size:22px; color:var(--chili); }
+  .fuse-cost{ display:flex; align-items:center; gap:6px; font-size:12px; font-weight:700; color:var(--ink-soft); background:var(--legend-bg); border-radius:10px; padding:8px 12px; margin-bottom:14px; }
+  .fuse-cost b{ color:var(--chili); font-family:'Jua'; font-weight:400; font-size:14px; }
+  .fuse-group-title{ font-size:11.5px; font-weight:700; color:var(--ink-soft); margin:12px 0 6px; text-transform:uppercase; letter-spacing:0.5px;}
+  .fuse-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(70px,1fr)); gap:8px; }
+  .fuse-item{ border:1.5px solid var(--line); border-radius:10px; padding:6px 4px; text-align:center; background:#fff; position:relative;}
+  .fuse-item.have{ border-color:var(--bamboo); background:var(--common-bg); }
+  .fuse-item img{ width:34px;height:34px;object-fit:contain; border-radius:50%; background:var(--cream); padding:3px;}
+  .fuse-item .fname{ font-size:9.5px; margin-top:3px; font-weight:700; line-height:1.15; }
+  .fuse-check{ position:absolute; top:2px; right:3px; color:var(--bamboo-dark); }
+  .fuse-cta{ width:100%; margin-top:16px; padding:14px; font-size:15px; border-radius:14px; }
+
+  /* ---------- Shop ---------- */
+  .shop-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .countdown{ font-size:11.5px; font-weight:700; background:var(--ink); color:#fff; border-radius:999px; padding:5px 12px; }
+  .shop-section-title{ display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:var(--ink-soft); margin:14px 0 8px;}
+  .shop-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(100px,1fr)); gap:10px; }
+  .shop-item{ border:1.5px solid var(--line); border-radius:12px; padding:8px; text-align:center; background:#fff; }
+  .shop-item img{ width:48px;height:48px;object-fit:contain;border-radius:50%;background:var(--cream);padding:4px;}
+  .shop-item .sname{ font-size:10.5px; font-weight:700; margin-top:4px; }
+  .shop-item .sprice{ font-size:11px; font-weight:700; color:var(--gold); margin:3px 0 6px; display:flex; align-items:center; justify-content:center; gap:3px;}
+  .shop-item .btn{ width:100%; padding:6px 4px; font-size:11px; }
+  .fuse-flame{ position:absolute; top:2px; left:3px; color:var(--chili); }
+
+  /* ---------- Fuse Dex (skins) ---------- */
+  .fusedex-empty{ text-align:center; padding:36px 16px; color:var(--ink-soft); font-size:13px; line-height:1.7; }
+  .fusedex-empty svg{ width:34px; height:34px; color:var(--line); margin-bottom:8px; }
+  .fusedex-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(96px,1fr)); gap:12px; }
+  .fusedex-item{
+    border:1.5px solid var(--line); border-radius:14px; padding:12px 8px 10px; text-align:center;
+    background:linear-gradient(180deg,#fff,#fffaf1); position:relative;
+  }
+  .fusedex-item.equipped{ border-color:var(--gold); box-shadow:0 0 0 2px var(--gold) inset; }
+  .fusedex-thumb-wrap{ position:relative; width:60px; height:60px; margin:0 auto 6px; }
+  .fusedex-name{ font-size:11.5px; font-weight:700; line-height:1.25; margin-top:2px; }
+  .fusedex-tag{ font-size:9px; color:var(--ink-soft); margin-top:2px; }
+  .btn-skin{
+    margin-top:8px; font-size:9.5px; font-weight:700; padding:4px 10px; border-radius:999px;
+    border:1.5px solid var(--gold); background:#fff; color:#9c7420; cursor:pointer;
+  }
+  .btn-skin.active{ background:var(--gold); color:#fff; }
+
+
+  /* ---------- Modal ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(43,36,32,0.55); display:flex; align-items:center; justify-content:center;
+    z-index:100; padding:20px; opacity:0; pointer-events:none; transition:opacity .2s ease;
+  }
+  .overlay.show{ opacity:1; pointer-events:auto; }
+  .modal-card{
+    background:var(--paper); border-radius:22px; padding:26px 22px 22px; max-width:340px; width:100%;
+    text-align:center; box-shadow:0 20px 50px rgba(0,0,0,0.35); transform:scale(0.85); transition:transform .25s ease;
+    position:relative; overflow:hidden;
+  }
+  .overlay.show .modal-card{ transform:scale(1); }
+  .modal-close{ position:absolute; top:10px; right:10px; background:var(--common-bg); border:none; border-radius:50%; width:28px;height:28px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink-soft);}
+  .reveal-ring{ position:relative; width:130px; height:130px; margin:6px auto 10px; }
+  .reveal-backdrop{ position:absolute; inset:8px; border-radius:50%; background:var(--cream); z-index:1; }
+  .reveal-img{ width:130px;height:130px;object-fit:contain; padding:14px; position:relative; z-index:2;}
+  .reveal-tag{ font-size:11px; font-weight:700; border-radius:999px; padding:3px 12px; display:inline-block; margin-bottom:6px;}
+  .reveal-name{ font-size:20px; margin:2px 0 4px; }
+  .reveal-new{ font-size:12px; color:var(--bamboo-dark); font-weight:700; }
+  .modal-card-wide{ max-width:440px; }
+  .reveal10-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(58px,1fr)); gap:8px; margin:6px 0 12px; }
+  .reveal10-item{ border:1.5px solid var(--line); border-radius:10px; padding:6px 4px 7px; text-align:center; background:#fff; position:relative; }
+  .reveal10-item.coin-bonus{ background:var(--legend-bg); border-color:var(--gold); }
+  .reveal10-item.coin-bonus .reveal10-thumb-wrap{ color:var(--gold); display:flex; align-items:center; justify-content:center; }
+  .reveal10-thumb-wrap{ position:relative; width:44px; height:44px; margin:0 auto 4px; }
+  .reveal10-name{ font-size:9.5px; font-weight:700; line-height:1.15; margin-top:3px; }
+  .reveal10-tag{ font-size:8.5px; font-weight:700; border-radius:999px; padding:1px 6px; display:inline-block; margin-top:3px; }
+  .reveal10-summary{ font-size:12px; color:var(--ink-soft); font-weight:700; text-align:center; line-height:1.5; }
+  .stage-clear-title{ font-size:24px; margin-bottom:4px; color:var(--chili); }
+
+  .toast-wrap{ position:fixed; bottom:18px; left:50%; transform:translateX(-50%); z-index:200; display:flex; flex-direction:column; gap:8px; align-items:center; }
+  .toast{
+    background:var(--ink); color:#fff; padding:10px 18px; border-radius:999px; font-size:12.5px; font-weight:700;
+    box-shadow:var(--shadow); animation: toastIn .25s ease, toastOut .3s ease 1.9s forwards;
+  }
+  @keyframes toastIn{ from{ opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes toastOut{ to{ opacity:0; transform:translateY(-8px);} }
+
+  .footer-note{ text-align:center; font-size:10.5px; color:var(--ink-soft); margin-top:16px; opacity:0.8; }
+
+  @media (max-width:420px){
+    .brand h1{ font-size:18px; }
+    .stat-pill{ font-size:12px; padding:5px 10px 5px 7px; }
+    .basket{ width:190px; height:170px; }
+    .dumpling-wrap img{ width:140px; height:140px; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div class="topbar">
+    <div class="brand">
+      <span class="badge-dot"></span>
+      <div>
+        <h1>만두집 뽑기</h1>
+        <div class="sub">눌러서 모으는 말랑 만두 도감</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat-pill coin"><span class="ic" id="icCoin"></span><span id="coinCount">0</span></div>
+      <div class="stat-pill ticket"><span class="ic" id="icTicket"></span><span id="ticketCount">0</span></div>
+    </div>
+  </div>
+
+  <div class="stage-strip">
+    <div>
+      <div class="st-title" id="stageTitle"></div>
+      <div class="st-desc" id="stageDesc"></div>
+    </div>
+    <div class="st-num" id="stageNum"></div>
+  </div>
+
+  <div class="hero">
+    <div class="per-click" id="perClickTag"></div>
+    <div class="steam-wrap">
+      <div class="steam-puff" style="left:60px; animation-delay:0s;"></div>
+      <div class="steam-puff" style="left:100px; animation-delay:1.1s;"></div>
+      <div class="steam-puff" style="left:140px; animation-delay:2.1s;"></div>
+    </div>
+    <div class="basket">
+      <div class="basket-ring"></div>
+      <div class="dumpling-wrap" id="dumplingBtn">
+        <div class="hero-backdrop"></div>
+        <img id="dumplingImg" class="blend-photo" src="https://i5.walmartimages.com/seo/Giant-Dumpling-Squishy-4-6-10-Inch-Squishy-Dumpling-Squishy-Large-Valentines-Day-Jumbo-Dumplings-Bun-with-Face-for-Adults_f6ca411e-a7d0-4648-961b-116074a8bda7.ea10b42887a7517ce46c5cfac6d2a6b1.jpeg" alt="만두">
+      </div>
+      <div class="float-layer" id="floatLayer"></div>
+    </div>
+    <div class="hero-hint">만두를 눌러서 코인을 모으세요</div>
+    <div class="hero-hint" id="equippedLabel" style="font-weight:700; color:var(--ink);"></div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab-btn active" data-tab="gacha"></button>
+    <button class="tab-btn" data-tab="dex"></button>
+    <button class="tab-btn" data-tab="fuse"></button>
+    <button class="tab-btn" data-tab="fusedex"></button>
+  </div>
+
+  <div class="panel" id="panel"></div>
+
+  <div class="footer-note">사운드는 브라우저에서 직접 만들어낸 효과음입니다 · 첫 클릭 시 재생됩니다</div>
+</div>
+
+<div class="overlay" id="revealOverlay">
+  <div class="modal-card" id="revealCard">
+    <button class="modal-close" id="revealClose"></button>
+    <div class="reveal-ring" id="revealRing">
+      <div class="reveal-backdrop"></div>
+      <img class="reveal-img blend-photo" id="revealImg" src="">
+    </div>
+    <div class="reveal-tag" id="revealTag"></div>
+    <div class="reveal-name" id="revealName"></div>
+    <div class="reveal-new" id="revealNew"></div>
+    <button class="btn btn-ghost" id="revealOk" style="margin-top:14px; width:100%;">확인</button>
+  </div>
+</div>
+
+<div class="overlay" id="reveal10Overlay">
+  <div class="modal-card modal-card-wide" id="reveal10Card">
+    <button class="modal-close" id="reveal10Close"></button>
+    <h3 style="margin:2px 0 12px;">10연 뽑기 결과</h3>
+    <div class="reveal10-grid" id="reveal10Grid"></div>
+    <div class="reveal10-summary" id="reveal10Summary"></div>
+    <button class="btn btn-ghost" id="reveal10Ok" style="margin-top:14px; width:100%;">확인</button>
+  </div>
+</div>
+
+<div class="overlay" id="stageClearOverlay">
+  <div class="modal-card">
+    <div class="stage-clear-title">단계 완료!</div>
+    <div id="stageClearBody" style="font-size:13px; color:var(--ink-soft); line-height:1.6;"></div>
+    <button class="btn btn-primary" id="stageClearOk" style="margin-top:16px; width:100%;">다음 단계로</button>
+  </div>
+</div>
+
+<div class="overlay" id="endingOverlay">
+  <div class="modal-card">
+    <div class="stage-clear-title">도감 마스터!</div>
+    <div style="font-size:13px; color:var(--ink-soft); line-height:1.6;">
+      모든 단계의 퓨즈 만두를 완성했습니다.<br>만두집의 전설이 되었어요.
+    </div>
+    <button class="btn btn-primary" id="endingOk" style="margin-top:16px; width:100%;">계속 즐기기</button>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+/* ================= 모바일: 스크롤/확대 방지 ================= */
+/* 핀치줌 제스처 차단 (iOS Safari 전용 이벤트) */
+document.addEventListener('gesturestart', function(e){ e.preventDefault(); });
+document.addEventListener('gesturechange', function(e){ e.preventDefault(); });
+document.addEventListener('gestureend', function(e){ e.preventDefault(); });
+/* 두 손가락 이상으로 화면을 움직이는 핀치줌 동작 차단 */
+document.addEventListener('touchmove', function(e){
+  if(e.touches && e.touches.length > 1){ e.preventDefault(); }
+}, {passive:false});
+/* 빠르게 두 번 탭해서 확대되는 더블탭 줌 차단 */
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function(e){
+  const now = Date.now();
+  if(now - lastTouchEnd <= 300){ e.preventDefault(); }
+  lastTouchEnd = now;
+}, {passive:false});
+
+/* ================= ICONS ================= */
+function svg(inner, size){ size=size||18; return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+inner+'</svg>'; }
+const ICONS = {
+  coin: svg('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.2"/>'),
+  ticket: svg('<path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4Z"/><line x1="10" y1="6" x2="10" y2="18" stroke-dasharray="2 3"/>'),
+  gacha: svg('<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a9 15 0 0 1 0 18"/>'),
+  book: svg('<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5A1.5 1.5 0 0 1 18.5 20H6.5A2.5 2.5 0 0 0 4 22.5V5.5Z"/><path d="M4 19a2.5 2.5 0 0 1 2.5-2.5H20"/>'),
+  flame: svg('<path d="M12 22c4.4 0 7-2.6 7-6.6 0-3.2-2-5-3.4-7.3-.5.9-1.1 1.7-1.9 2.3.2-2.4-.5-5-3.2-7.4-.2 2.6-1.3 4.4-3 6C6 10.6 5 12.6 5 15.4 5 19.4 7.6 22 12 22Z"/>'),
+  store: svg('<path d="M3 9 4.5 4h15L21 9"/><path d="M3 9v11h18V9"/><path d="M9 20v-6h6v6"/><path d="M3 9h18"/>'),
+  lock: svg('<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'),
+  x: svg('<line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>'),
+  check: svg('<polyline points="20 6 9 17 4 12"/>'),
+  star: svg('<path d="M12 2 14.9 8.6 22 9.3 16.7 14 18.3 21 12 17.3 5.7 21 7.3 14 2 9.3 9.1 8.6 12 2Z"/>'),
+  trophy: svg('<path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v4a5 5 0 0 1-10 0V4Z"/><path d="M7 5H4.5A2.5 2.5 0 0 0 7 8.5"/><path d="M17 5h2.5A2.5 2.5 0 0 1 17 8.5"/>'),
+  hamburger: svg('<line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/>'),
+  warn: svg('<path d="M12 3 2 20h20L12 3Z"/><line x1="12" y1="9" x2="12" y2="14"/><line x1="12" y1="17.2" x2="12" y2="17.3"/>'),
+  chevDown: svg('<polyline points="6 9 12 15 18 9"/>')
+};
+document.getElementById('icCoin').innerHTML = ICONS.coin;
+document.getElementById('icTicket').innerHTML = ICONS.ticket;
+document.getElementById('revealClose').innerHTML = ICONS.x;
+document.getElementById('reveal10Close').innerHTML = ICONS.x;
+
+const TAB_META = [
+  {key:'gacha', label:'뽑기', icon:ICONS.gacha},
+  {key:'dex', label:'도감', icon:ICONS.book},
+  {key:'fuse', label:'퓨즈', icon:ICONS.flame},
+  {key:'fusedex', label:'퓨즈 도감', icon:ICONS.trophy},
+];
+document.querySelectorAll('.tab-btn').forEach((btn,i)=>{
+  btn.innerHTML = TAB_META[i].icon + '<span>'+TAB_META[i].label+'</span>';
+});
+
+/* ================= DATA ================= */
+const DUMPLING_IMG = "https://i5.walmartimages.com/seo/Giant-Dumpling-Squishy-4-6-10-Inch-Squishy-Dumpling-Squishy-Large-Valentines-Day-Jumbo-Dumplings-Bun-with-Face-for-Adults_f6ca411e-a7d0-4648-961b-116074a8bda7.ea10b42887a7517ce46c5cfac6d2a6b1.jpeg";
+
+const RARITY_LABEL = {common:'일반', rare:'레어', legendary:'전설'};
+
+/* 각 단계마다 theme(단계 고유 색상 2톤 + 배경톤)과 filter(그 테마만의 질감을 표현하는
+   CSS 필터 조합)를 함께 정의해서, 색상만 바뀌는 게 아니라 얼음은 차갑고 뿌옇게,
+   불꽃은 뜨겁고 진하게, 기계는 금속처럼 채도가 죽는 식으로 단계별 '느낌'이 실제로 달라지게 함 */
+const STAGE_DEFS = [
+  {
+    key:'color', title:'1단계 · 색깔 만두', desc:'세상의 모든 색을 담은 만두',
+    common:['빨강','주황','노랑','연두','초록','청록','하늘','파랑','남색','보라','자주','분홍','갈색','회색','먹색'],
+    rare:['무지개','홀로그램','금박','은박','진주','오로라','네온'],
+    legendary:['다이아몬드','황금룡','은하수'],
+    theme:{ a:'#6B8F71', b:'#4f6d55', bg:'#FAF3E4' },
+    filter:''
+  },
+  {
+    key:'fruit', title:'2단계 · 과일 만두', desc:'새콤달콤 과일향 가득한 만두',
+    common:['딸기','바나나','포도','사과','오렌지','레몬','수박','복숭아','키위','블루베리','망고','체리','파인애플','자두','멜론'],
+    rare:['용과','두리안','스타프루트','패션프루트','리치','망고스틴','구아바'],
+    legendary:['황금사과','천상의 복숭아','무지개멜론'],
+    theme:{ a:'#E8935B', b:'#C1440E', bg:'#FFF3E0' },
+    filter:' sepia(0.12) contrast(1.06)'
+  },
+  {
+    key:'galaxy', title:'3단계 · 은하 만두', desc:'우주 저편에서 온 신비로운 만두',
+    common:['수성','금성','지구','화성','목성','토성','천왕성','해왕성','달','혜성','소행성','블랙홀','성운','은하수','별'],
+    rare:['오로라은하','초신성','웜홀','펄서','퀘이사','이중성','적색거성'],
+    legendary:['빅뱅','다중우주','시간의 문'],
+    theme:{ a:'#4B5FBF', b:'#2E3A82', bg:'#EDEBFA' },
+    filter:' contrast(1.2) brightness(0.94) saturate(1.1)'
+  },
+  {
+    key:'gem', title:'4단계 · 보석 만두', desc:'반짝이는 보석의 기운을 품은 만두',
+    common:['자수정','루비','사파이어','에메랄드','토파즈','오팔','가넷','터키석','페리도트','아쿠아마린','문스톤','시트린','진주','흑요석','수정'],
+    rare:['알렉산드라이트','타이거아이','라피스라줄리','로도크로사이트','오브시디언스타','문라이트오팔','선스톤'],
+    legendary:['왕관의 보석','시간의 크리스탈','별의 눈물'],
+    theme:{ a:'#2FA6A6', b:'#1D7373', bg:'#E3F7F6' },
+    filter:' contrast(1.28) brightness(1.06) saturate(1.22)'
+  },
+  {
+    key:'myth', title:'5단계 · 신화 만두', desc:'전설 속 존재들이 깃든 만두',
+    common:['불의 정령','물의 정령','바람의 정령','대지의 정령','빛의 정령','어둠의 정령','요정','켄타우로스','그리폰','페가수스','세이렌','임프','노움','도깨비','구미호'],
+    rare:['유니콘','불사조','키메라','히드라','스핑크스','크라켄','발키리'],
+    legendary:['황금용','태초의 여신','시공의 지배자'],
+    theme:{ a:'#E0A458', b:'#C1440E', bg:'#FBEAE0' },
+    filter:' contrast(1.3) brightness(1.08) saturate(1.3) drop-shadow(0 0 5px rgba(224,164,88,0.35))'
+  },
+  {
+    key:'ice', title:'6단계 · 얼음 만두', desc:'차갑고 청량한 얼음의 기운을 담은 만두',
+    common:['서리','고드름','싸락눈','함박눈','빙하','성에','얼음꽃','한파','된서리','빙산','눈꽃','살얼음','겨울바람','서릿발','백야'],
+    rare:['오로라빙정','만년설','빙하협곡','다이아몬드서리','블리자드','크리스탈빙산','극야'],
+    legendary:['영구동토의 심장','절대영도','빙하시대의 지배자'],
+    theme:{ a:'#5AA9D6', b:'#2E6E99', bg:'#EAF6FC' },
+    filter:' hue-rotate(-8deg) saturate(1.12) brightness(1.14) contrast(0.92) blur(0.3px)'
+  },
+  {
+    key:'fire', title:'7단계 · 불꽃 만두', desc:'활활 타오르는 뜨거운 불의 기운을 담은 만두',
+    common:['불씨','장작불','화롯불','들불','모닥불','화염','잉걸불','불꽃놀이','아지랑이','화산재','용암불꽃','연기','숯불','횃불','들끓는 열기'],
+    rare:['화산분화','불의 소용돌이','붉은 노을','화염폭풍','마그마결정','불사조 깃털','작열하는 태양'],
+    legendary:['대화재의 핵','태초의 불씨','불멸의 화염'],
+    theme:{ a:'#E8642C', b:'#9c360b', bg:'#FFEDE3' },
+    filter:' sepia(0.28) saturate(1.4) contrast(1.24) brightness(1.05)'
+  },
+  {
+    key:'ocean', title:'8단계 · 심해 만두', desc:'깊고 신비로운 심해의 기운을 담은 만두',
+    common:['파도','물방울','조약돌','산호','불가사리','소라','파도거품','갯벌','밀물','썰물','물보라','바다안개','모래알','해초','물결'],
+    rare:['심해아귀','발광해파리','고래의 노래','해류소용돌이','진주조개','심해분화구','침몰선의 보물'],
+    legendary:['파도의 여왕','심연의 지배자','대해일의 혼'],
+    theme:{ a:'#2B6A8F', b:'#123A52', bg:'#E6F0F5' },
+    filter:' hue-rotate(6deg) saturate(1.1) brightness(0.88) contrast(1.2)'
+  },
+  {
+    key:'dessert', title:'9단계 · 디저트 만두', desc:'달콤하고 폭신한 디저트의 기운을 담은 만두',
+    common:['마카롱','쿠키','초코칩','캐러멜','생크림','솜사탕','젤리','머랭','와플','팬케이크','도넛','푸딩','마시멜로','크림치즈','딸기시럽'],
+    rare:['무지개마카롱','황금캐러멜','벨벳케이크','트뤼플초콜릿','민트초코','핑크마카롱타워','크렘브륄레'],
+    legendary:['전설의 케이크 왕국','천상의 디저트','달콤함의 여신'],
+    theme:{ a:'#F0A6C2', b:'#D97CA6', bg:'#FDEFF5' },
+    filter:' saturate(0.88) brightness(1.18) contrast(0.88) sepia(0.06)'
+  },
+  {
+    key:'mecha', title:'10단계 · 기계 만두', desc:'차갑고 정교한 기계 문명이 깃든 최후의 만두',
+    common:['톱니바퀴','나사','회로판','전선','배터리','볼트','센서','모터','스프링','리벳','케이블','방열판','스위치','렌즈','합금판'],
+    rare:['서보모터','양자칩','플라즈마코어','나노봇','홀로그램패널','초전도체','사이버코어'],
+    legendary:['인공지능의 핵','궁극병기','기계신'],
+    theme:{ a:'#6B7B8C', b:'#33414D', bg:'#EDF1F4' },
+    filter:' grayscale(0.35) contrast(1.35) brightness(1.04) saturate(0.85) hue-rotate(190deg)'
+  }
+];
+
+function buildTypes(def){
+  const common = def.common.map((name,i)=>({
+    id: def.key+'-c'+i, name, rarity:'common', stage:def.key,
+    hue: Math.round(i*(360/def.common.length))
+  }));
+  const rare = def.rare.map((name,i)=>({
+    id: def.key+'-r'+i, name, rarity:'rare', stage:def.key,
+    hue: Math.round(18+i*(360/def.rare.length))
+  }));
+  const legendary = def.legendary.map((name,i)=>({
+    id: def.key+'-l'+i, name, rarity:'legendary', stage:def.key,
+    hue: Math.round(30+i*(360/def.legendary.length))
+  }));
+  return common.concat(rare, legendary);
+}
+
+const STAGES = STAGE_DEFS.map(def=>({
+  key:def.key, title:def.title, desc:def.desc,
+  theme:def.theme, filter:def.filter,
+  types: buildTypes(def),
+  shop:{ commonPrice:0, rarePrices:{}, legendaryPrices:{}, nextRefresh:0 },
+  fuseReq:null
+}));
+
+const TYPE_MAP = new Map();
+STAGES.forEach(s=> s.types.forEach(t=> TYPE_MAP.set(t.id,t)));
+
+/* 퓨즈 도감(스킨): 각 단계를 완성하면 얻는 전용 만두 스킨. 외형만 바뀌고 수익은 장착된 도감 만두를 그대로 따름 */
+const FUSE_SKINS = STAGES.map((s,i)=>({
+  id: 'fuseskin-'+s.key,
+  name: s.title.split('·')[1].trim()+' 퓨즈',
+  desc: s.title+' 완성 기념 스킨',
+  rarity: 'legendary',
+  hue: Math.round(i*(360/STAGES.length)),
+  stageIndex: i
+}));
+function getEquippedSkin(){
+  return state.equippedSkinId ? FUSE_SKINS.find(f=>f.id===state.equippedSkinId) : null;
+}
+
+/* ================= STATE ================= */
+const state = {
+  coins: 300,
+  ticketsRare: 0,
+  ticketsLegendary: 0,
+  mileage: {}, /* 카테고리(단계 key)별로 따로 쌓임: { color:{common,rare,legendary}, fruit:{...}, ... } */
+  stageIndex: 0,
+  activeTab: 'gacha',
+  dexStageView: 0,
+  gachaStageView: 0,
+  gachaMenuOpen: false,
+  inventory: {},
+  dex: new Set(),
+  equippedId: null,
+  equippedSkinId: null,
+};
+
+function currentStage(){ return STAGES[state.stageIndex]; }
+function randInt(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+function fmt(n){ return n.toLocaleString('ko-KR'); }
+
+/* ================= CLICK BALANCE ================= */
+/* 밸런스 규칙: "다음 단계의 일반 만두 수익은 반드시 이전 단계의 전설 만두 수익보다 높아야 한다."
+   즉 일반→레어→전설로 갈수록 오르고(레어 3배, 전설 7배), 단계가 하나 넘어갈 때도
+   또 한 번 확실히 올라야 함. 이걸 항상 만족시키려면 "단계 성장 배율(CLICK_STAGE_GROWTH)"이
+   "등급 배율 중 가장 큰 값(legendary)"보다 커야 함 (9 > 7이므로 항상 성립).
+   아래 stageEconomyFactor()가 이 값들을 그대로 참조해서 상점가/뽑기가도 자동으로 같이 맞춰짐 */
+const RARITY_CLICK_MULT = {common:1, rare:3, legendary:7};
+/* 단계가 늘어나도 별도 배열을 추가할 필요 없이 공식으로 자동 확장되는 클릭 수익 */
+const CLICK_STAGE_GROWTH = 9;
+function stageBaseClick(idx){ return Math.max(1, Math.round(1 * Math.pow(CLICK_STAGE_GROWTH, idx))); }
+
+function stageIdxOf(type){ return STAGES.findIndex(s=>s.key===type.stage); }
+function getEquippedType(){
+  if(state.equippedId && state.dex.has(state.equippedId)) return TYPE_MAP.get(state.equippedId);
+  return null;
+}
+function baseClickValue(){
+  const eq = getEquippedType();
+  if(!eq) return stageBaseClick(0);
+  return Math.round(stageBaseClick(stageIdxOf(eq)) * RARITY_CLICK_MULT[eq.rarity]);
+}
+
+/* ================= FILTER / VISUAL HELPERS ================= */
+/* 단계별 필터는 이제 STAGE_DEFS에 함께 정의되어 있어(각 테마의 질감을 표현),
+   여기서는 그 값을 안전하게 읽어오기만 함. 정의된 단계를 넘어서면 마지막 느낌을
+   재사용해서 이후 단계가 추가돼도 깨지지 않음 */
+function stageFilterExtra(idx){
+  if(idx<0) idx = 0;
+  if(idx>=STAGES.length) idx = STAGES.length-1;
+  return STAGES[idx].filter || '';
+}
+/* 현재 진행 단계의 테마 색상(2톤 그라디언트 + 배경톤)을 CSS 변수로 반영해서
+   찜통/기둥/스테이지바가 단계마다 실제로 다른 색과 분위기를 갖도록 함 */
+function applyStageTheme(idx){
+  if(idx<0) idx = 0;
+  if(idx>=STAGES.length) idx = STAGES.length-1;
+  const t = STAGES[idx].theme;
+  if(!t) return;
+  const root = document.documentElement.style;
+  root.setProperty('--stage-a', t.a);
+  root.setProperty('--stage-b', t.b);
+  root.setProperty('--stage-bg', t.bg);
+}
+function filterFor(type){
+  let sat = type.rarity==='common' ? 2.1 : type.rarity==='rare' ? 2.7 : 3.2;
+  let bri = type.rarity==='common' ? 1.02 : type.rarity==='rare' ? 1.08 : 1.14;
+  let con = type.rarity==='common' ? 1.02 : 1.1;
+  const idx = stageIdxOf(type);
+  sat = sat * (1 + idx*0.04); // 단계가 오를수록 색이 조금씩 더 진해짐
+  return 'hue-rotate('+type.hue+'deg) saturate('+sat.toFixed(2)+') brightness('+bri+') contrast('+con+')'+stageFilterExtra(idx);
+}
+function thumbHtml(type, opts){
+  opts = opts||{};
+  const size = opts.size||56;
+  const locked = opts.locked;
+  const bg = opts.bg || 'var(--cream)';
+  const filter = locked ? 'grayscale(1) brightness(0.5)' : filterFor(type);
+  const inner = Math.round(size*0.82);
+  return '<span class="thumb-circle" style="display:inline-flex;align-items:center;justify-content:center;width:'+size+'px;height:'+size+'px;border-radius:50%;background:'+bg+';overflow:hidden;">'+
+    '<img src="'+DUMPLING_IMG+'" class="blend-photo" style="width:'+inner+'px;height:'+inner+'px;object-fit:contain;filter:'+filter+'" alt="'+(locked?'???':type.name)+'">'+
+  '</span>';
+}
+
+/* ================= AUDIO ================= */
+let actx=null;
+function ensureAudio(){ if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(actx && actx.state==='suspended'){ actx.resume(); } }
+function playPop(pitch){
+  pitch = pitch||1;
+  ensureAudio(); if(!actx) return;
+  const t0=actx.currentTime;
+  const osc=actx.createOscillator(); const gain=actx.createGain();
+  osc.type='sine';
+  osc.frequency.setValueAtTime(240*pitch, t0);
+  osc.frequency.exponentialRampToValueAtTime(480*pitch, t0+0.08);
+  gain.gain.setValueAtTime(0.0001, t0);
+  gain.gain.exponentialRampToValueAtTime(0.28, t0+0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0+0.2);
+  osc.connect(gain).connect(actx.destination);
+  osc.start(t0); osc.stop(t0+0.22);
+}
+function playChime(rarity){
+  ensureAudio(); if(!actx) return;
+  const notesMap = {common:[523.25,659.25], rare:[523.25,659.25,783.99,1046.5], legendary:[440,554.37,659.25,880,1108.7,1318.5]};
+  const notes = notesMap[rarity]||notesMap.common;
+  notes.forEach((f,i)=>{
+    const t0=actx.currentTime + i*0.1;
+    const osc=actx.createOscillator(); const gain=actx.createGain();
+    osc.type='triangle'; osc.frequency.value=f;
+    gain.gain.setValueAtTime(0.0001,t0);
+    gain.gain.exponentialRampToValueAtTime(0.22,t0+0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001,t0+0.4);
+    osc.connect(gain).connect(actx.destination);
+    osc.start(t0); osc.stop(t0+0.45);
+  });
+}
+
+/* ================= TOAST ================= */
+function toast(msg){
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className='toast'; el.textContent=msg;
+  wrap.appendChild(el);
+  setTimeout(()=> el.remove(), 2300);
+}
+
+/* ================= STAGE RUNTIME INIT ================= */
+function sampleIds(types, min, max){
+  const n = randInt(min, Math.min(max, types.length));
+  const shuffled = types.slice().sort(()=>Math.random()-0.5);
+  return shuffled.slice(0,n).map(t=>t.id);
+}
+function refreshFuseReq(stage){
+  const commons = stage.types.filter(t=>t.rarity==='common');
+  const rares = stage.types.filter(t=>t.rarity==='rare');
+  const legends = stage.types.filter(t=>t.rarity==='legendary');
+  stage.fuseReq = {
+    commons: commons.map(t=>t.id),
+    rares: sampleIds(rares,4,7),
+    legendaries: sampleIds(legends,2,3)
+  };
+  stage.fuseNextRefresh = Date.now()+60000;
+}
+function initStageRuntime(idx){
+  const stage = STAGES[idx];
+  refreshFuseReq(stage);
+  stage.shop.commonPrice = Math.round(25 * stageEconomyFactor(idx));
+  refreshShopPrices(stage);
+}
+function refreshShopPrices(stage){
+  const idx = STAGES.indexOf(stage);
+  const scale = stageEconomyFactor(idx);
+  stage.shop.rarePrices = {};
+  stage.shop.legendaryPrices = {};
+  stage.types.filter(t=>t.rarity==='rare').forEach(t=>{
+    stage.shop.rarePrices[t.id] = randInt(Math.round(150*scale), Math.round(300*scale));
+  });
+  stage.types.filter(t=>t.rarity==='legendary').forEach(t=>{
+    stage.shop.legendaryPrices[t.id] = randInt(Math.round(900*scale), Math.round(1600*scale));
+  });
+  stage.shop.nextRefresh = Date.now()+60000;
+}
+function getPrice(type){
+  const stage = STAGES.find(s=>s.key===type.stage);
+  if(type.rarity==='common') return stage.shop.commonPrice;
+  if(type.rarity==='rare') return stage.shop.rarePrices[type.id];
+  return stage.shop.legendaryPrices[type.id];
+}
+
+/* ================= CORE ACTIONS ================= */
+/* 다음 단계로 넘어갈 때는 '그 전 단계의 전설 만두'를 장착해서 버는 수익이
+   플레이어의 실제 수입이라고 가정하고, 그 수입 기준으로 가격을 잡음.
+   (1단계 초반은 아직 전설 만두가 없으므로 기본 클릭값 1을 기준으로 함)
+   나중에 단계를 몇 개 더 추가해도 이 공식이 자동으로 대응함 */
+function stageEconomyFactor(idx){
+  if(idx<=0) return stageBaseClick(0); // 1단계 초반: 기본 클릭값 기준
+  return stageBaseClick(idx-1) * RARITY_CLICK_MULT.legendary; // 그 이후: 전 단계 전설 만두 클릭값 기준
+}
+
+/* 뽑기 탭에서는 카테고리(단계)를 따로 선택할 수 있으므로, 뽑기 비용/확률은
+   진행 단계(state.stageIndex)가 아니라 사용자가 선택한 뽑기 단계(state.gachaStageView)를
+   기준으로 계산함. 단, 퓨즈 비용은 항상 진행 중인 단계 기준 그대로 유지 */
+function gachaStage(){ return STAGES[state.gachaStageView]; }
+function normalGachaCost(){ return Math.round(40 * stageEconomyFactor(state.gachaStageView)); }
+function rareGachaCost(){ return Math.round(150 * stageEconomyFactor(state.gachaStageView)); }
+function legendaryGachaCost(){ return Math.round(650 * stageEconomyFactor(state.gachaStageView)); }
+function fuseCoinCost(){ return Math.round(2200 * stageEconomyFactor(state.stageIndex)); }
+/* 전설 뽑기 실패(대체 코인) 보상도 전설 뽑기 비용에 비례하게 만들어서
+   단계가 올라가도 보상이 상대적으로 초라해지지 않도록 함 */
+function legendaryCoinBonus(){ return Math.round(legendaryGachaCost()*0.55); }
+function normalGacha10Cost(){ return normalGachaCost()*10; }
+function rareGacha10Cost(){ return rareGachaCost()*10; }
+function legendaryGacha10Cost(){ return legendaryGachaCost()*10; }
+
+function rollRarity(table){
+  const r = Math.random()*100; let acc=0;
+  for(const k in table){ acc+=table[k]; if(r<acc) return k; }
+  const keys = Object.keys(table); return keys[keys.length-1];
+}
+/* 마일리지는 이제 카테고리(단계)별로 따로 쌓임. 새 단계가 해금되면 자동으로 0부터 시작함 */
+function getMileage(stageKey){
+  if(!state.mileage[stageKey]) state.mileage[stageKey] = {common:0, rare:0, legendary:0};
+  return state.mileage[stageKey];
+}
+function addMileage(stageKey, rarity, amt){
+  const m = getMileage(stageKey);
+  m[rarity] = (m[rarity]||0) + amt;
+}
+/* 중복 만두가 나오면 등급별 마일리지로 적립됨(카테고리별 독립).
+   단, 이미 퓨즈를 완료한 '지난 단계'의 만두는 앞으로 상점 가격 기준이 될 예정이라
+   중복이어도 도감 보유 개수가 함께 계속 쌓임. 현재 해금 최상위 단계는 지금처럼
+   마일리지만 쌓이고 보유 개수는 늘지 않음(1개 유지) */
+function grantType(type){
+  const owned = state.inventory[type.id]||0;
+  const isNewDiscovery = !state.dex.has(type.id);
+  state.dex.add(type.id);
+  const isPastStage = stageIdxOf(type) < state.stageIndex;
+  if(owned<=0){
+    state.inventory[type.id] = 1;
+    return { isNew:isNewDiscovery, restocked: !isNewDiscovery, mileage:0 };
+  }
+  addMileage(type.stage, type.rarity, 1);
+  if(isPastStage) state.inventory[type.id] = owned+1;
+  return { isNew:false, restocked:false, mileage:1, stacked:isPastStage };
+}
+/* ---- 뽑기 1회분 로직: 단일 뽑기와 10연 뽑기가 동일하게 재사용 ---- */
+function rollNormalOnce(){
+  const stage = gachaStage();
+  const rarity = rollRarity({common:85, rare:15});
+  const pool = stage.types.filter(t=>t.rarity===rarity);
+  const picked = pool[randInt(0,pool.length-1)];
+  return { type:picked, result:grantType(picked) };
+}
+function rollRareOnce(){
+  const stage = gachaStage();
+  const rarity = rollRarity({rare:85, legendary:15});
+  const pool = stage.types.filter(t=>t.rarity===rarity);
+  const picked = pool[randInt(0,pool.length-1)];
+  return { type:picked, result:grantType(picked) };
+}
+function rollLegendaryOnce(){
+  const stage = gachaStage();
+  if(Math.random() < 0.5){
+    const amount = legendaryCoinBonus();
+    state.coins += amount;
+    return { coinsOnly:true, amount };
+  }
+  const pool = stage.types.filter(t=>t.rarity==='legendary');
+  const picked = pool[randInt(0,pool.length-1)];
+  return { type:picked, result:grantType(picked) };
+}
+
+function doNormalGacha(){
+  const cost = normalGachaCost();
+  if(state.coins < cost){ toast('코인이 부족합니다'); return; }
+  state.coins -= cost;
+  const {type:picked, result} = rollNormalOnce();
+  playChime(picked.rarity);
+  showReveal(picked, result);
+  renderAll();
+}
+function doRareGacha(){
+  const cost = rareGachaCost();
+  if(state.ticketsRare < 1){ toast('레어 뽑기권이 없습니다'); return; }
+  if(state.coins < cost){ toast('코인이 부족합니다'); return; }
+  state.ticketsRare -= 1;
+  state.coins -= cost;
+  const {type:picked, result} = rollRareOnce();
+  playChime(picked.rarity);
+  showReveal(picked, result);
+  renderAll();
+}
+function doLegendaryGacha(){
+  const cost = legendaryGachaCost();
+  if(state.ticketsLegendary < 1){ toast('전설 뽑기권이 없습니다'); return; }
+  if(state.coins < cost){ toast('코인이 부족합니다'); return; }
+  state.ticketsLegendary -= 1;
+  state.coins -= cost;
+  const roll = rollLegendaryOnce();
+  if(roll.coinsOnly){
+    playChime('legendary');
+    toast('전설 만두 대신 '+fmt(roll.amount)+' 코인을 획득했습니다!');
+    renderAll();
+    return;
+  }
+  playChime('legendary');
+  showReveal(roll.type, roll.result);
+  renderAll();
+}
+
+/* ---- 10연 뽑기: 가격과 소모량을 10배로 한 번에 처리하고 결과를 모아서 보여줌 ---- */
+function finishGacha10(rolls){
+  const order = {common:0, rare:1, legendary:2};
+  let best = 'common';
+  rolls.forEach(r=>{ if(r.type && order[r.type.rarity]>order[best]) best = r.type.rarity; });
+  playChime(best);
+  showReveal10(rolls);
+  renderAll();
+}
+function doNormalGacha10(){
+  const cost = normalGacha10Cost();
+  if(state.coins < cost){ toast('코인이 부족합니다 (10연 '+fmt(cost)+')'); return; }
+  state.coins -= cost;
+  const rolls = [];
+  for(let i=0;i<10;i++) rolls.push(rollNormalOnce());
+  finishGacha10(rolls);
+}
+function doRareGacha10(){
+  const cost = rareGacha10Cost();
+  if(state.ticketsRare < 10){ toast('레어 뽑기권이 부족합니다 (10장 필요)'); return; }
+  if(state.coins < cost){ toast('코인이 부족합니다 (10연 '+fmt(cost)+')'); return; }
+  state.ticketsRare -= 10;
+  state.coins -= cost;
+  const rolls = [];
+  for(let i=0;i<10;i++) rolls.push(rollRareOnce());
+  finishGacha10(rolls);
+}
+function doLegendaryGacha10(){
+  const cost = legendaryGacha10Cost();
+  if(state.ticketsLegendary < 10){ toast('전설 뽑기권이 부족합니다 (10장 필요)'); return; }
+  if(state.coins < cost){ toast('코인이 부족합니다 (10연 '+fmt(cost)+')'); return; }
+  state.ticketsLegendary -= 10;
+  state.coins -= cost;
+  const rolls = [];
+  for(let i=0;i<10;i++) rolls.push(rollLegendaryOnce());
+  finishGacha10(rolls);
+}
+function commonTotal(stage){
+  return stage.types.filter(t=>t.rarity==='common').reduce((s,t)=> s+(state.inventory[t.id]||0), 0);
+}
+/* ---- 뽑기권 제작: 현재 뽑기 탭에서 선택 중인 카테고리의 마일리지를 소비 ---- */
+const RARE_TICKET_COST = 10;   // 일반 마일리지
+const LEGEND_TICKET_COST = 5;  // 레어 마일리지
+function craftRareTicket(){
+  const m = getMileage(gachaStage().key);
+  if(m.common < RARE_TICKET_COST){ toast('일반 마일리지가 부족합니다'); return; }
+  m.common -= RARE_TICKET_COST;
+  state.ticketsRare += 1;
+  playChime('rare');
+  toast('레어 뽑기권을 획득했습니다');
+  renderAll();
+}
+function craftLegendaryTicket(){
+  const m = getMileage(gachaStage().key);
+  if(m.rare < LEGEND_TICKET_COST){ toast('레어 마일리지가 부족합니다'); return; }
+  m.rare -= LEGEND_TICKET_COST;
+  state.ticketsLegendary += 1;
+  playChime('legendary');
+  toast('전설 뽑기권을 획득했습니다');
+  renderAll();
+}
+function buyItem(typeId){
+  const type = TYPE_MAP.get(typeId);
+  const price = getPrice(type);
+  if(state.coins < price){ toast('코인이 부족합니다'); return; }
+  state.coins -= price;
+  state.inventory[typeId] = (state.inventory[typeId]||0)+1;
+  state.dex.add(typeId);
+  playPop(1.15);
+  toast(type.name+' 만두를 구매했습니다');
+  renderAll();
+}
+function attemptFuse(){
+  const stage = currentStage();
+  const req = stage.fuseReq;
+  const all = req.commons.concat(req.rares, req.legendaries);
+  const missing = all.filter(id => (state.inventory[id]||0) < 1);
+  if(missing.length>0){ toast('재료가 '+missing.length+'개 부족합니다'); return; }
+  const cost = fuseCoinCost();
+  if(state.coins < cost){ toast('코인이 부족합니다 (필요 '+fmt(cost)+')'); return; }
+  state.coins -= cost;
+  all.forEach(id => state.inventory[id] -= 1);
+  playChime('legendary');
+  advanceStage();
+}
+function advanceStage(){
+  const finished = currentStage();
+  if(state.stageIndex >= STAGES.length-1){
+    renderAll();
+    showEnding();
+    return;
+  }
+  const nextIdx = state.stageIndex+1;
+  initStageRuntime(nextIdx);
+  showStageClear(finished, STAGES[nextIdx]);
+  state.stageIndex = nextIdx;
+  state.activeTab = 'gacha';
+  state.dexStageView = nextIdx;
+  state.gachaStageView = nextIdx;
+  renderAll();
+}
+
+/* ================= RENDER ================= */
+function renderHeader(){
+  document.getElementById('coinCount').textContent = fmt(state.coins);
+  document.getElementById('ticketCount').textContent = fmt(state.ticketsRare + state.ticketsLegendary);
+  const stage = currentStage();
+  document.getElementById('stageTitle').textContent = stage.title;
+  document.getElementById('stageDesc').textContent = stage.desc;
+  document.getElementById('stageNum').textContent = (state.stageIndex+1)+' / '+STAGES.length;
+  const base = baseClickValue();
+  const lo = Math.round(base*0.85), hi = Math.round(base*1.25);
+  document.getElementById('perClickTag').textContent = '클릭당 '+fmt(lo)+'~'+fmt(hi)+' 코인';
+  applyStageTheme(state.stageIndex);
+  tintHero();
+}
+
+function renderTabs(){
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.tab===state.activeTab);
+  });
+}
+
+function renderGachaPanel(){
+  const stage = gachaStage();
+  const costN = normalGachaCost();
+  const costR = rareGachaCost();
+  const costL = legendaryGachaCost();
+  const costN10 = normalGacha10Cost();
+  const costR10 = rareGacha10Cost();
+  const costL10 = legendaryGacha10Cost();
+  const m = getMileage(stage.key);
+  const mCommon = m.common, mRare = m.rare;
+  const pctR = Math.min(100, Math.round((mCommon/RARE_TICKET_COST)*100));
+  const pctL = Math.min(100, Math.round((mRare/LEGEND_TICKET_COST)*100));
+  const isPast = state.gachaStageView !== state.stageIndex;
+
+  /* 카테고리 선택을 햄버거 메뉴로: 지금까지 해금된(진행 단계 이하) 카테고리만 노출 */
+  const catMenuItems = STAGES.map((s,i)=>{
+    if(i > state.stageIndex) return '';
+    const label = s.title.split('·')[1].trim();
+    const tag = i===state.stageIndex ? '<span class="cat-item-tag">진행중</span>' : '<span class="cat-item-tag past">완료</span>';
+    return '<button class="cat-menu-item'+(i===state.gachaStageView?' active':'')+'" data-gachastage="'+i+'">'+
+      '<span>'+label+'</span>'+tag+
+    '</button>';
+  }).join('');
+
+  const coinWarning = state.coins<costN
+    ? '<div class="coin-warning">'+ICONS.warn+'<div>코인이 부족해요! 만두를 눌러서 코인을 더 모아보세요. (일반 뽑기까지 '+fmt(costN-state.coins)+' 코인 부족)</div></div>'
+    : '';
+
+  return ''+
+  '<h2>뽑기</h2>'+
+  '<div class="lead">카테고리를 골라 뽑으세요 · 이미 보유한 만두가 또 나오면 등급별 마일리지로 적립돼요</div>'+
+  '<div class="gacha-cat-select">'+
+    '<button class="cat-hamburger" id="btnCatMenu">'+
+      '<span class="cat-hb-left">'+ICONS.hamburger+'<span>'+stage.title.split('·')[1].trim()+(isPast?' · 이전 단계 복습 뽑기':'')+'</span></span>'+
+      ICONS.chevDown+
+    '</button>'+
+    '<div class="cat-menu'+(state.gachaMenuOpen?' open':'')+'" id="catMenu">'+catMenuItems+'</div>'+
+  '</div>'+
+  coinWarning+
+  '<div class="mileage-board">'+
+    '<div class="mb-title">'+stage.title.split('·')[1].trim()+' 카테고리 마일리지</div>'+
+    '<div class="mb-row">'+
+      '<div class="mb-item common">'+ICONS.coin+'<div class="mb-num">'+fmt(mCommon)+'</div><div class="mb-label">일반 마일리지</div></div>'+
+      '<div class="mb-item rare">'+ICONS.star+'<div class="mb-num">'+fmt(mRare)+'</div><div class="mb-label">레어 마일리지</div></div>'+
+    '</div>'+
+  '</div>'+
+  '<div class="gacha-card">'+
+    '<div class="gacha-card-top">'+
+      '<div class="g-icon">'+ICONS.gacha+'</div>'+
+      '<div class="g-body">'+
+        '<div class="g-title">일반 뽑기</div>'+
+        '<div class="g-odds">일반 85% · 레어 15%</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="g-actions">'+
+      '<button class="btn btn-primary" id="btnNormalGacha" '+(state.coins<costN?'disabled':'')+'>'+fmt(costN)+' 코인</button>'+
+      '<button class="btn btn-outline btn-sm" id="btnNormalGacha10" '+(state.coins<costN10?'disabled':'')+'>10연 · '+fmt(costN10)+' 코인</button>'+
+    '</div>'+
+  '</div>'+
+  '<div class="gacha-card ticket">'+
+    '<div class="gacha-card-top">'+
+      '<div class="g-icon">'+ICONS.ticket+'</div>'+
+      '<div class="g-body">'+
+        '<div class="g-title">레어 뽑기 <span class="g-owned">보유 '+state.ticketsRare+'장</span></div>'+
+        '<div class="g-odds">레어 85% · 전설 15% (레어 이상 확정) · '+fmt(costR)+' 코인 · 10연은 뽑기권 10장 필요</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="g-actions">'+
+      '<button class="btn btn-ghost" id="btnRareGacha" '+(state.ticketsRare<1||state.coins<costR?'disabled':'')+'>뽑기</button>'+
+      '<button class="btn btn-outline btn-sm" id="btnRareGacha10" '+(state.ticketsRare<10||state.coins<costR10?'disabled':'')+'>10연 · '+fmt(costR10)+'</button>'+
+    '</div>'+
+  '</div>'+
+  '<div class="gacha-card ticket legend">'+
+    '<div class="gacha-card-top">'+
+      '<div class="g-icon">'+ICONS.star+'</div>'+
+      '<div class="g-body">'+
+        '<div class="g-title">전설 뽑기 <span class="g-owned">보유 '+state.ticketsLegendary+'장</span></div>'+
+        '<div class="g-odds">전설 확정 · 단, 50% 확률로 대신 '+fmt(legendaryCoinBonus())+' 코인 · '+fmt(costL)+' 코인 · 10연은 뽑기권 10장 필요</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="g-actions">'+
+      '<button class="btn btn-ghost" id="btnLegendaryGacha" '+(state.ticketsLegendary<1||state.coins<costL?'disabled':'')+'>뽑기</button>'+
+      '<button class="btn btn-outline btn-sm" id="btnLegendaryGacha10" '+(state.ticketsLegendary<10||state.coins<costL10?'disabled':'')+'>10연 · '+fmt(costL10)+'</button>'+
+    '</div>'+
+  '</div>'+
+  '<div class="craft-row">'+
+    '<div class="g-icon">'+ICONS.ticket+'</div>'+
+    '<div class="prog">'+
+      '<div class="g-title">레어 뽑기권 제작</div>'+
+      '<div class="g-odds">일반 마일리지 '+RARE_TICKET_COST+' → 레어 뽑기권 1장 ('+mCommon+'/'+RARE_TICKET_COST+')</div>'+
+      '<div class="prog-bar"><div class="prog-fill" style="width:'+pctR+'%"></div></div>'+
+    '</div>'+
+    '<button class="btn btn-outline" id="btnCraftRareTicket" '+(mCommon<RARE_TICKET_COST?'disabled':'')+'>제작</button>'+
+  '</div>'+
+  '<div class="craft-row">'+
+    '<div class="g-icon">'+ICONS.star+'</div>'+
+    '<div class="prog">'+
+      '<div class="g-title">전설 뽑기권 제작</div>'+
+      '<div class="g-odds">레어 마일리지 '+LEGEND_TICKET_COST+' → 전설 뽑기권 1장 ('+mRare+'/'+LEGEND_TICKET_COST+')</div>'+
+      '<div class="prog-bar"><div class="prog-fill" style="width:'+pctL+'%"></div></div>'+
+    '</div>'+
+    '<button class="btn btn-outline" id="btnCraftLegendaryTicket" '+(mRare<LEGEND_TICKET_COST?'disabled':'')+'>제작</button>'+
+  '</div>';
+}
+
+function renderDexPanel(){
+  const stage = STAGES[state.dexStageView];
+  let tabsHtml = STAGES.map((s,i)=>{
+    if(i > state.stageIndex) return '';
+    return '<button class="dex-tab '+(i===state.dexStageView?'active':'')+'" data-dexstage="'+i+'">'+s.title.split('·')[1].trim()+'</button>';
+  }).join('');
+
+  let discovered=0, totalAll=0;
+  STAGES.forEach((s,i)=>{ if(i<=state.stageIndex){ s.types.forEach(t=>{ totalAll++; if(state.dex.has(t.id)) discovered++; }); } });
+
+  const items = stage.types.map(type=>{
+    const owned = state.inventory[type.id]||0;
+    const known = state.dex.has(type.id);
+    const isEquipped = state.equippedId===type.id;
+    const ringClass = type.rarity==='rare' ? 'ring rare' : type.rarity==='legendary' ? 'ring legendary' : '';
+    return '<div class="dex-item'+(isEquipped?' equipped':'')+'">'+
+      (owned>0?'<div class="dex-count">x'+owned+'</div>':'')+
+      '<div class="dex-thumb-wrap">'+
+        (ringClass?'<div class="'+ringClass+'"></div>':'')+
+        (known ? thumbHtml(type,{size:56}) : thumbHtml(type,{size:56, locked:true}))+
+        (!known?'<div class="lock-badge">'+ICONS.lock+'</div>':'')+
+      '</div>'+
+      '<div class="dex-name">'+(known?type.name:'???')+'</div>'+
+      '<div class="dex-rarity '+type.rarity+'">'+RARITY_LABEL[type.rarity]+'</div>'+
+      (known?'<div><button class="btn-equip'+(isEquipped?' active':'')+'" data-equip="'+type.id+'">'+(isEquipped?'장착중':'장착')+'</button></div>':'')+
+    '</div>';
+  }).join('');
+
+  return '<h2>도감</h2>'+
+    '<div class="lead">장착한 만두를 클릭하면 더 높은 등급일수록 코인을 많이 법니다</div>'+
+    '<div class="dex-tabs">'+tabsHtml+'</div>'+
+    '<div class="dex-progress">전체 도감 달성률 '+discovered+' / '+totalAll+'</div>'+
+    '<div class="dex-grid">'+items+'</div>';
+}
+
+function renderFusePanel(){
+  const stage = currentStage();
+  const req = stage.fuseReq;
+  const all = req.commons.concat(req.rares, req.legendaries);
+  const have = all.filter(id => (state.inventory[id]||0) >= 1).length;
+  const matReady = have === all.length;
+  const cost = fuseCoinCost();
+  const canAfford = state.coins >= cost;
+  const ready = matReady && canAfford;
+
+  function group(title, ids){
+    const items = ids.map(id=>{
+      const type = TYPE_MAP.get(id);
+      const owned = (state.inventory[id]||0) >= 1;
+      return '<div class="fuse-item '+(owned?'have':'')+'">'+
+        (owned?'<span class="fuse-check">'+ICONS.check+'</span>':'')+
+        thumbHtml(type,{size:34})+
+        '<div class="fname">'+type.name+'</div>'+
+      '</div>';
+    }).join('');
+    return '<div class="fuse-group-title">'+title+' ('+ids.filter(id=>(state.inventory[id]||0)>=1).length+'/'+ids.length+')</div><div class="fuse-grid">'+items+'</div>';
+  }
+
+  let btnLabel = '퓨즈 만두 완성하기 → 다음 단계';
+  if(!matReady) btnLabel = '재료를 모두 모아주세요';
+  else if(!canAfford) btnLabel = '코인이 부족합니다 ('+fmt(cost)+' 필요)';
+
+  return '<h2>퓨즈</h2>'+
+    '<div class="shop-head"><div class="lead" style="margin:0;">레어·전설 재료는 1분마다 새로 바뀌어요. 일반 만두는 15종 모두 필요해요</div><div class="countdown" id="fuseCountdown">'+fuseCountdownText(stage)+'</div></div>'+
+    '<div class="fuse-summary"><div>전체 재료 확보</div><div class="num">'+have+' / '+all.length+'</div></div>'+
+    '<div class="fuse-cost">'+ICONS.coin.replace('width="18" height="18"','width="14" height="14"')+' 퓨즈 비용 <b>'+fmt(cost)+'</b> 코인 (보유 '+fmt(state.coins)+')</div>'+
+    group('일반 만두', req.commons)+
+    group('레어 만두', req.rares)+
+    group('전설 만두', req.legendaries)+
+    '<button class="btn btn-primary fuse-cta" id="btnFuse" '+(ready?'':'disabled')+'>'+btnLabel+'</button>';
+}
+
+function shopCountdownText(stage){
+  const remain = Math.max(0, stage.shop.nextRefresh - Date.now());
+  const s = Math.floor(remain/1000);
+  const mm = String(Math.floor(s/60)).padStart(2,'0');
+  const ss = String(s%60).padStart(2,'0');
+  return mm+':'+ss;
+}
+function fuseCountdownText(stage){
+  const remain = Math.max(0, stage.fuseNextRefresh - Date.now());
+  const s = Math.floor(remain/1000);
+  const mm = String(Math.floor(s/60)).padStart(2,'0');
+  const ss = String(s%60).padStart(2,'0');
+  return mm+':'+ss;
+}
+
+function renderFuseDexPanel(){
+  const completedCount = state.stageIndex; // 0..stageIndex-1 단계는 이미 퓨즈 완성됨
+  if(completedCount<=0){
+    return '<h2>퓨즈 도감</h2>'+
+      '<div class="lead">완성한 퓨즈 만두를 스킨으로 장착할 수 있어요</div>'+
+      '<div class="fusedex-empty">'+ICONS.trophy+
+      '<div>아직 완성한 퓨즈 만두가 없어요.<br>퓨즈 탭에서 재료를 모아 첫 퓨즈를 완성해보세요!</div>'+
+      '</div>';
+  }
+  const items = FUSE_SKINS.slice(0, completedCount).map(skin=>{
+    const isEquipped = state.equippedSkinId===skin.id;
+    return '<div class="fusedex-item'+(isEquipped?' equipped':'')+'">'+
+      '<div class="fusedex-thumb-wrap">'+
+        '<div class="ring legendary"></div>'+
+        thumbHtml(skin,{size:60})+
+      '</div>'+
+      '<div class="fusedex-name">'+skin.name+'</div>'+
+      '<div class="fusedex-tag">'+STAGES[skin.stageIndex].title.split('·')[0].trim()+' 완성 스킨</div>'+
+      '<button class="btn-skin'+(isEquipped?' active':'')+'" data-equipskin="'+skin.id+'">'+(isEquipped?'장착 해제':'스킨 장착')+'</button>'+
+    '</div>';
+  }).join('');
+  return '<h2>퓨즈 도감</h2>'+
+    '<div class="lead">외형만 바뀌는 스킨이에요. 클릭 수익은 도감에서 장착한 만두 등급을 그대로 따릅니다</div>'+
+    '<div class="fusedex-grid">'+items+'</div>';
+}
+
+function renderPanel(){
+  const panel = document.getElementById('panel');
+  if(state.activeTab==='gacha') panel.innerHTML = renderGachaPanel();
+  else if(state.activeTab==='dex') panel.innerHTML = renderDexPanel();
+  else if(state.activeTab==='fuse') panel.innerHTML = renderFusePanel();
+  else if(state.activeTab==='fusedex') panel.innerHTML = renderFuseDexPanel();
+  attachPanelEvents();
+}
+
+function attachPanelEvents(){
+  const byId = id => document.getElementById(id);
+  if(state.activeTab==='gacha'){
+    if(byId('btnCatMenu')) byId('btnCatMenu').onclick = ()=>{ state.gachaMenuOpen = !state.gachaMenuOpen; renderPanel(); };
+    document.querySelectorAll('[data-gachastage]').forEach(btn=>{
+      btn.onclick = ()=>{
+        state.gachaStageView = parseInt(btn.dataset.gachastage,10);
+        state.gachaMenuOpen = false;
+        renderPanel();
+      };
+    });
+    if(byId('btnNormalGacha')) byId('btnNormalGacha').onclick = doNormalGacha;
+    if(byId('btnRareGacha')) byId('btnRareGacha').onclick = doRareGacha;
+    if(byId('btnLegendaryGacha')) byId('btnLegendaryGacha').onclick = doLegendaryGacha;
+    if(byId('btnNormalGacha10')) byId('btnNormalGacha10').onclick = doNormalGacha10;
+    if(byId('btnRareGacha10')) byId('btnRareGacha10').onclick = doRareGacha10;
+    if(byId('btnLegendaryGacha10')) byId('btnLegendaryGacha10').onclick = doLegendaryGacha10;
+    if(byId('btnCraftRareTicket')) byId('btnCraftRareTicket').onclick = craftRareTicket;
+    if(byId('btnCraftLegendaryTicket')) byId('btnCraftLegendaryTicket').onclick = craftLegendaryTicket;
+  } else if(state.activeTab==='dex'){
+    document.querySelectorAll('[data-dexstage]').forEach(btn=>{
+      btn.onclick = ()=>{ state.dexStageView = parseInt(btn.dataset.dexstage,10); renderPanel(); };
+    });
+    document.querySelectorAll('[data-equip]').forEach(btn=>{
+      btn.onclick = ()=>{
+        ensureAudio();
+        state.equippedId = btn.dataset.equip;
+        playPop(1.2);
+        toast('만두를 장착했습니다');
+        tintHero();
+        renderHeader();
+        renderPanel();
+      };
+    });
+  } else if(state.activeTab==='fuse'){
+    if(byId('btnFuse')) byId('btnFuse').onclick = attemptFuse;
+  } else if(state.activeTab==='fusedex'){
+    document.querySelectorAll('[data-equipskin]').forEach(btn=>{
+      btn.onclick = ()=>{
+        ensureAudio();
+        const id = btn.dataset.equipskin;
+        state.equippedSkinId = (state.equippedSkinId===id) ? null : id;
+        playPop(1.2);
+        toast(state.equippedSkinId ? '스킨을 장착했습니다' : '스킨을 해제했습니다');
+        tintHero();
+        renderHeader();
+        renderPanel();
+      };
+    });
+  }
+}
+
+function renderAll(){
+  renderHeader();
+  renderTabs();
+  renderPanel();
+}
+
+/* ================= REVEAL / MODALS ================= */
+function showReveal(type, result){
+  const overlay = document.getElementById('revealOverlay');
+  document.getElementById('revealImg').src = DUMPLING_IMG;
+  document.getElementById('revealImg').style.filter = filterFor(type);
+  const ring = document.getElementById('revealRing');
+  ring.querySelectorAll('.ring').forEach(r=>r.remove());
+  if(type.rarity!=='common'){
+    const r = document.createElement('div');
+    r.className = 'ring '+type.rarity;
+    ring.insertBefore(r, ring.firstChild);
+  }
+  const tag = document.getElementById('revealTag');
+  tag.textContent = RARITY_LABEL[type.rarity];
+  tag.className = 'reveal-tag dex-rarity '+type.rarity;
+  document.getElementById('revealName').textContent = type.name+' 만두';
+  let statusText;
+  if(result.isNew) statusText = '새로운 도감 등록!';
+  else if(result.restocked) statusText = '다시 보유하게 되었습니다';
+  else if(result.stacked) statusText = '중복! '+RARITY_LABEL[type.rarity]+' 마일리지 +1 · 도감 보유 개수 +1';
+  else statusText = '중복! '+RARITY_LABEL[type.rarity]+' 마일리지 +1';
+  document.getElementById('revealNew').textContent = statusText;
+  overlay.classList.add('show');
+}
+document.getElementById('revealClose').onclick = ()=> document.getElementById('revealOverlay').classList.remove('show');
+document.getElementById('revealOk').onclick = ()=> document.getElementById('revealOverlay').classList.remove('show');
+
+function showReveal10(rolls){
+  const grid = document.getElementById('reveal10Grid');
+  let newCount = 0, stackedCount = 0;
+  const mileageGain = {common:0, rare:0, legendary:0};
+  grid.innerHTML = rolls.map(r=>{
+    if(r.coinsOnly){
+      return '<div class="reveal10-item coin-bonus">'+
+        '<div class="reveal10-thumb-wrap">'+ICONS.coin+'</div>'+
+        '<div class="reveal10-name">+'+fmt(r.amount)+'</div>'+
+        '<div class="reveal10-tag" style="background:var(--legend-bg); color:var(--legend);">코인</div>'+
+      '</div>';
+    }
+    const type = r.type, res = r.result;
+    if(res.isNew) newCount++;
+    if(res.mileage) mileageGain[type.rarity] = (mileageGain[type.rarity]||0)+1;
+    if(res.stacked) stackedCount++;
+    const ringClass = type.rarity==='rare' ? 'ring rare' : type.rarity==='legendary' ? 'ring legendary' : '';
+    return '<div class="reveal10-item">'+
+      '<div class="reveal10-thumb-wrap">'+
+        (ringClass?'<div class="'+ringClass+'"></div>':'')+
+        thumbHtml(type,{size:44})+
+      '</div>'+
+      '<div class="reveal10-name">'+type.name+'</div>'+
+      '<div class="reveal10-tag dex-rarity '+type.rarity+'">'+RARITY_LABEL[type.rarity]+(res.isNew?' NEW':'')+'</div>'+
+    '</div>';
+  }).join('');
+  const parts = [];
+  if(newCount>0) parts.push('신규 도감 '+newCount+'개');
+  ['common','rare','legendary'].forEach(k=>{
+    if(mileageGain[k]>0) parts.push(RARITY_LABEL[k]+' 마일리지 +'+mileageGain[k]);
+  });
+  if(stackedCount>0) parts.push('도감 보유 개수 +'+stackedCount);
+  document.getElementById('reveal10Summary').textContent = parts.length ? parts.join(' · ') : '결과를 확인하세요';
+  document.getElementById('reveal10Overlay').classList.add('show');
+}
+document.getElementById('reveal10Close').onclick = ()=> document.getElementById('reveal10Overlay').classList.remove('show');
+document.getElementById('reveal10Ok').onclick = ()=> document.getElementById('reveal10Overlay').classList.remove('show');
+
+function showStageClear(finishedStage, nextStage){
+  document.getElementById('stageClearBody').innerHTML =
+    finishedStage.title+' 완료!<br>퓨즈 만두를 완성했습니다.<br><br>다음 무대: <b>'+nextStage.title+'</b><br>'+nextStage.desc;
+  document.getElementById('stageClearOverlay').classList.add('show');
+}
+document.getElementById('stageClearOk').onclick = ()=> document.getElementById('stageClearOverlay').classList.remove('show');
+
+function showEnding(){
+  document.getElementById('endingOverlay').classList.add('show');
+}
+document.getElementById('endingOk').onclick = ()=> document.getElementById('endingOverlay').classList.remove('show');
+
+/* ================= CLICK / FLOAT COIN ================= */
+const dumplingBtn = document.getElementById('dumplingBtn');
+const dumplingImg = document.getElementById('dumplingImg');
+const floatLayer = document.getElementById('floatLayer');
+
+function spawnFloat(x, y, text, crit){
+  const span = document.createElement('div');
+  span.className = 'float-coin'+(crit?' crit':'');
+  span.textContent = text;
+  span.style.left = x+'px';
+  span.style.top = y+'px';
+  floatLayer.appendChild(span);
+  setTimeout(()=> span.remove(), 950);
+}
+
+dumplingBtn.addEventListener('click', (e)=>{
+  ensureAudio();
+  const crit = Math.random() < 0.1;
+  const base = baseClickValue();
+  const variance = 0.85 + Math.random()*0.4;
+  let gain = Math.max(1, Math.round(base*variance));
+  if(crit) gain *= 5;
+  state.coins += gain;
+  const eq = getEquippedType();
+  playPop(crit ? 1.6 : (eq && eq.rarity==='legendary' ? 1.25 : eq && eq.rarity==='rare' ? 1.12 : 1));
+
+  const rect = dumplingBtn.getBoundingClientRect();
+  const x = (e.clientX!==undefined ? e.clientX - rect.left : rect.width/2) - 10;
+  const y = (e.clientY!==undefined ? e.clientY - rect.top : rect.height/2) - 10;
+  spawnFloat(x, y, '+'+gain, crit);
+
+  dumplingImg.classList.remove('squish');
+  void dumplingImg.offsetWidth;
+  dumplingImg.classList.add('squish');
+
+  renderHeader();
+  // keep gacha button enabled-state fresh if visible
+  if(state.activeTab==='gacha') renderPanel();
+});
+
+/* Reflect the currently equipped (clickable) dumpling on the hero image */
+function tintHero(){
+  const eq = getEquippedType();
+  const skin = getEquippedSkin();
+  const visual = skin || eq;
+  if(visual){
+    dumplingImg.style.filter = filterFor(visual);
+  } else {
+    dumplingImg.style.filter = 'saturate(1.1)';
+  }
+  const label = document.getElementById('equippedLabel');
+  if(label){
+    let text = eq
+      ? ('수익 만두: '+eq.name+' 만두 · '+RARITY_LABEL[eq.rarity])
+      : '수익 만두: 기본 만두 · 도감에서 만두를 장착해보세요';
+    if(skin) text += '  ·  스킨: '+skin.name;
+    label.textContent = text;
+  }
+}
+
+/* ================= TABS ================= */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    state.activeTab = btn.dataset.tab;
+    state.gachaMenuOpen = false;
+    renderAll();
+  });
+});
+
+/* ================= INTERVALS ================= */
+setInterval(()=>{
+  if(state.activeTab==='fuse'){
+    const el = document.getElementById('fuseCountdown');
+    if(el) el.textContent = fuseCountdownText(currentStage());
+  }
+}, 1000);
+
+setInterval(()=>{
+  const stage = currentStage();
+  refreshShopPrices(stage);
+  refreshFuseReq(stage);
+  if(state.activeTab==='fuse'){ renderPanel(); toast('퓨즈 재료가 갱신되었습니다'); }
+}, 60000);
+
+/* ================= INIT ================= */
+initStageRuntime(0);
+tintHero();
+renderAll();
+</script>
+</body>
+</html>
