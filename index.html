@@ -134,6 +134,7 @@
   .dumpling-wrap{
     position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation; /* 더블탭 확대만 차단, click 이벤트/연타는 그대로 즉시 통과 */
   }
   .hero-backdrop{
     position:absolute; width:180px; height:180px; border-radius:50%;
@@ -182,7 +183,7 @@
     flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
     background:transparent; border:none; border-radius:12px;
     padding:6px 4px 5px; font-family:'Noto Sans KR'; font-weight:700; font-size:10.5px;
-    color:var(--ink-soft); cursor:pointer; transition:all .15s ease;
+    color:var(--ink-soft); cursor:pointer; transition:all .15s ease; touch-action:manipulation;
   }
   .tab-btn svg{ width:19px; height:19px; transition:transform .15s ease; }
   .tab-btn.active{ background:var(--ink); color:#fff; box-shadow:var(--shadow); }
@@ -286,7 +287,7 @@
   .btn{
     border:none; border-radius:10px; padding:9px 16px; font-weight:700; font-size:13px;
     cursor:pointer; font-family:'Noto Sans KR'; transition:transform .1s ease, opacity .15s;
-    white-space:nowrap;
+    white-space:nowrap; touch-action:manipulation;
   }
   .btn:active{ transform:scale(0.96); }
   .btn-primary{ background:var(--chili); color:#fff; }
@@ -485,7 +486,7 @@
 
   <div class="panel" id="panel"></div>
 
-  <div class="footer-note">made by unvul, just for fun (unvul-coders)</div>
+  <div class="footer-note">Made by Unvul, Just For Fun (unvul-coders)</div>
 </div>
 
 <div class="overlay" id="revealOverlay">
@@ -542,13 +543,9 @@ document.addEventListener('gestureend', function(e){ e.preventDefault(); });
 document.addEventListener('touchmove', function(e){
   if(e.touches && e.touches.length > 1){ e.preventDefault(); }
 }, {passive:false});
-/* 빠르게 두 번 탭해서 확대되는 더블탭 줌 차단 */
-let lastTouchEnd = 0;
-document.addEventListener('touchend', function(e){
-  const now = Date.now();
-  if(now - lastTouchEnd <= 300){ e.preventDefault(); }
-  lastTouchEnd = now;
-}, {passive:false});
+/* 더블탭 확대 차단은 CSS touch-action:manipulation으로 처리 (버튼 요소들에 적용)
+   -> touchend에서 preventDefault로 막는 방식은 빠른 연타 시 click 이벤트 자체를
+      씹어버려서(연타가 안 먹는 문제) 제거함 */
 
 /* ================= ICONS ================= */
 function svg(inner, size){ size=size||18; return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+inner+'</svg>'; }
