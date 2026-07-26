@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>말랑이 게임</title>
+<title>Malang 1.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -333,22 +333,22 @@
     background:conic-gradient(from 0deg,
       #FF0000,#FF7F00,#FFD400,#CFFF00,#4CD964,#00E0A8,
       #00C2FF,#3E7CFF,#7A5CFF,#C24CFF,#FF4CD8,#FF0000);
-    animation:spin 3.4s linear infinite; opacity:0.95;
+    animation:spin 3.4s linear infinite; opacity:0.85;
   }
   @keyframes rainbow12{
-    0%{ filter:hue-rotate(0deg) saturate(3) brightness(1.08); }
-    8.33%{ filter:hue-rotate(30deg) saturate(3) brightness(1.08); }
-    16.66%{ filter:hue-rotate(60deg) saturate(3) brightness(1.08); }
-    25%{ filter:hue-rotate(90deg) saturate(3) brightness(1.08); }
-    33.33%{ filter:hue-rotate(120deg) saturate(3) brightness(1.08); }
-    41.66%{ filter:hue-rotate(150deg) saturate(3) brightness(1.08); }
-    50%{ filter:hue-rotate(180deg) saturate(3) brightness(1.08); }
-    58.33%{ filter:hue-rotate(210deg) saturate(3) brightness(1.08); }
-    66.66%{ filter:hue-rotate(240deg) saturate(3) brightness(1.08); }
-    75%{ filter:hue-rotate(270deg) saturate(3) brightness(1.08); }
-    83.33%{ filter:hue-rotate(300deg) saturate(3) brightness(1.08); }
-    91.66%{ filter:hue-rotate(330deg) saturate(3) brightness(1.08); }
-    100%{ filter:hue-rotate(360deg) saturate(3) brightness(1.08); }
+    0%{ filter:hue-rotate(0deg) saturate(1.55) brightness(0.92); }
+    8.33%{ filter:hue-rotate(30deg) saturate(1.55) brightness(0.92); }
+    16.66%{ filter:hue-rotate(60deg) saturate(1.55) brightness(0.92); }
+    25%{ filter:hue-rotate(90deg) saturate(1.55) brightness(0.92); }
+    33.33%{ filter:hue-rotate(120deg) saturate(1.55) brightness(0.92); }
+    41.66%{ filter:hue-rotate(150deg) saturate(1.55) brightness(0.92); }
+    50%{ filter:hue-rotate(180deg) saturate(1.55) brightness(0.92); }
+    58.33%{ filter:hue-rotate(210deg) saturate(1.55) brightness(0.92); }
+    66.66%{ filter:hue-rotate(240deg) saturate(1.55) brightness(0.92); }
+    75%{ filter:hue-rotate(270deg) saturate(1.55) brightness(0.92); }
+    83.33%{ filter:hue-rotate(300deg) saturate(1.55) brightness(0.92); }
+    91.66%{ filter:hue-rotate(330deg) saturate(1.55) brightness(0.92); }
+    100%{ filter:hue-rotate(360deg) saturate(1.55) brightness(0.92); }
   }
   .rainbow-img{ animation: rainbow12 6s steps(12) infinite !important; }
   /* 4단계 퓨즈 스킨: 우주 별 이펙트 (별 반짝이는 배경 + 은은한 발광 펄스) */
@@ -384,13 +384,18 @@
       radial-gradient(circle at 60% 45%, #fff 0 1.4px, transparent 2.4px),
       conic-gradient(from 0deg, #7A5CFF, #5AA9D6, #C24CFF, #5AA9D6, #7A5CFF);
     animation: spin 3.6s linear infinite, galaxyTwinkle 2s ease-in-out infinite alternate;
-    opacity:0.95;
+    opacity:0.85;
   }
-  @keyframes galaxyTwinkle{ 0%{ opacity:0.75; } 100%{ opacity:1; filter:brightness(1.3) saturate(1.3); } }
+  @keyframes galaxyTwinkle{ 0%{ opacity:0.8; } 100%{ opacity:1; filter:brightness(1.12) saturate(1.12); } }
+  /* 2n번째(짝수) 스킨은 앞으로 항상 "색상 반전(보색)" 컨셉으로 고정. CSS invert()는
+     mix-blend-mode:multiply와 함께 쓰면 흰 배경이 검정으로 뒤집혀 사진 전체가 새까맣게
+     칠해져버리는 문제가 있어서 쓰지 않음. 대신 그 만두 고유 색상의 정반대(보색, +180deg)
+     로 hue-rotate만 걸어 실제로 "반전된 색"이 보이면서도 흰 배경은 그대로 흰색이라
+     투명하게 잘 사라짐. --ghue는 각 아이템마다 JS에서 인라인으로 지정됨 */
   @keyframes galaxyPulse{
-    0%{ filter:saturate(2.2) brightness(1.05) hue-rotate(260deg); }
-    50%{ filter:saturate(2.9) brightness(1.25) hue-rotate(280deg); }
-    100%{ filter:saturate(2.2) brightness(1.05) hue-rotate(260deg); }
+    0%{ filter:hue-rotate(var(--ghue,200deg)) saturate(1.5) brightness(1.05) contrast(1.08); }
+    50%{ filter:hue-rotate(calc(var(--ghue,200deg) + 20deg)) saturate(1.7) brightness(1.12) contrast(1.14); }
+    100%{ filter:hue-rotate(var(--ghue,200deg)) saturate(1.5) brightness(1.05) contrast(1.08); }
   }
   .galaxy-img{ animation: galaxyPulse 2.6s ease-in-out infinite !important; }
   /* 먹색/흑진주처럼 아주 짙은 색 만두는 다른 만두들과 달리 바깥 테두리가 동그랗지 않고
@@ -580,6 +585,36 @@
     50%{ transform:rotate(6deg); }
   }
 
+  /* ---------- Playground (놀이터) ---------- */
+  .playground-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(140px,1fr)); gap:14px; }
+  .playground-slot{
+    position:relative; border:1.5px dashed var(--line); border-radius:16px;
+    padding:14px 10px 12px; text-align:center; background:linear-gradient(180deg,#fff,#fffaf1);
+    min-height:158px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  }
+  .playground-slot.filled{ border-style:solid; border-color:var(--bamboo); }
+  .playground-add{
+    color:var(--ink-soft); font-size:12px; font-weight:700; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:8px; width:100%; height:100%;
+    justify-content:center;
+  }
+  .playground-add svg{ color:var(--line); }
+  .playground-remove{
+    position:absolute; top:6px; right:6px; background:var(--common-bg); border:none; border-radius:50%;
+    width:22px; height:22px; display:flex; align-items:center; justify-content:center; cursor:pointer;
+    color:var(--ink-soft); z-index:4;
+  }
+  .playground-bubble{
+    background:#fff; border:1.5px solid var(--line); border-radius:14px; padding:6px 10px;
+    font-size:10.5px; font-weight:700; margin-bottom:8px; cursor:pointer; max-width:130px;
+    box-shadow:var(--shadow); line-height:1.35; min-height:16px;
+  }
+  .playground-bubble.gift{
+    background:var(--legend-bg); border-color:var(--gold); color:var(--chili);
+    animation:bonusGlowPulse 1s ease-in-out infinite;
+  }
+  .playground-pet-wrap{ cursor:pointer; }
+
   @media (max-width:420px){
     .brand h1{ font-size:18px; }
     .stat-pill{ font-size:12px; padding:5px 10px 5px 7px; }
@@ -595,8 +630,8 @@
     <div class="brand">
       <span class="badge-dot"></span>
       <div>
-        <h1>말랑겜</h1>
-        <div class="sub">눌러서 모으는 말랑이 도감</div>
+        <h1>말랑이 게임</h1>
+        <div class="sub">눌러서 모으는 말랑 만두 도감</div>
       </div>
     </div>
     <div class="stats">
@@ -635,6 +670,7 @@
 
   <div class="tabs" id="tabs">
     <button class="tab-btn active" data-tab="gacha"></button>
+    <button class="tab-btn" data-tab="playground"></button>
     <button class="tab-btn" data-tab="dex"></button>
     <button class="tab-btn" data-tab="fuse"></button>
     <button class="tab-btn" data-tab="fusedex"></button>
@@ -642,9 +678,8 @@
   </div>
 
   <div class="panel" id="panel"></div>
-  <input type="file" id="hiddenSkinFileInput" accept="image/*" style="display:none;">
 
-  <div class="footer-note">Made By Unvul, Just For Fun (unvul-coders)</div>
+  <div class="footer-note">Made By Unvul, Just For Fun. (unvul-coders)</div>
 </div>
 
 <div class="bonus-mallang" id="bonusMallang">
@@ -675,6 +710,14 @@
     <div class="reveal10-grid" id="reveal10Grid"></div>
     <div class="reveal10-summary" id="reveal10Summary"></div>
     <button class="btn btn-ghost" id="reveal10Ok" style="margin-top:14px; width:100%;">확인</button>
+  </div>
+</div>
+
+<div class="overlay" id="playgroundPickOverlay">
+  <div class="modal-card modal-card-wide" id="playgroundPickCard">
+    <button class="modal-close" id="playgroundPickClose"></button>
+    <h3 style="margin:2px 0 12px;">놀이터에 놓을 말랑이 선택</h3>
+    <div class="dex-grid" id="playgroundPickGrid" style="max-height:340px; overflow-y:auto;"></div>
   </div>
 </div>
 
@@ -729,18 +772,21 @@ const ICONS = {
   hamburger: svg('<line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/>'),
   warn: svg('<path d="M12 3 2 20h20L12 3Z"/><line x1="12" y1="9" x2="12" y2="14"/><line x1="12" y1="17.2" x2="12" y2="17.3"/>'),
   chevDown: svg('<polyline points="6 9 12 15 18 9"/>'),
-  gear: svg('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>')
+  gear: svg('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>'),
+  park: svg('<path d="M12 2 6 11h3l-4 6h5v5h4v-5h5l-4-6h3Z"/>')
 };
 document.getElementById('icCoin').innerHTML = ICONS.coin;
 document.getElementById('icTicket').innerHTML = ICONS.ticket;
 document.getElementById('revealClose').innerHTML = ICONS.x;
 document.getElementById('reveal10Close').innerHTML = ICONS.x;
+document.getElementById('playgroundPickClose').innerHTML = ICONS.x;
 
 const TAB_META = [
   {key:'gacha', label:'뽑기', icon:ICONS.gacha},
+  {key:'playground', label:'놀이터', icon:ICONS.park},
   {key:'dex', label:'도감', icon:ICONS.book},
   {key:'fuse', label:'퓨즈', icon:ICONS.flame},
-  {key:'fusedex', label:'퓨즈 도감 & 스킨', icon:ICONS.trophy},
+  {key:'fusedex', label:'스킨', icon:ICONS.trophy},
   {key:'settings', label:'설정', icon:ICONS.gear},
 ];
 document.querySelectorAll('.tab-btn').forEach((btn,i)=>{
@@ -757,6 +803,8 @@ const BUTTER_IMG = "https://thumbnail.10x10.co.kr/webimage/image/add4_600/694/A0
    이미지들과 동일하게 .blend-photo(mix-blend-mode:multiply)로 렌더링해서 흰 배경이
    원 안의 테마 배경색과 자연스럽게 섞여 사라지도록 함(별도 배경 제거 처리 불필요) */
 const KEYCAP_IMG = "https://www.thockking.com/cdn/shop/files/Thock-King-mechanical-switch-fidget-toy-mini-red-pbt-OEM.png?v=1689379945&width=1000";
+/* 'reality' 이벤트 코드로 얻는 일반 스킨용 이미지 */
+const REALITY_IMG = "https://tse4.mm.bing.net/th/id/OIP.vzsQALHh-QcDSdu0n7UcCgHaHa?r=0&w=740&h=740&rs=1&pid=ImgDetMain&o=7&rm=3";
 
 const RARITY_LABEL = {common:'일반', rare:'레어', legendary:'전설'};
 
@@ -790,7 +838,7 @@ const STAGE_DEFS = [
     img: CHEESE_IMG, mascot:'치즈'
   },
   {
-    key:'cheese-type', title:'치즈 말랑이 · 치즈 종류', desc:'세상 모든 치즈 향이 나는 말랑이',
+    key:'cheese-type', title:'커스텀 치즈', desc:'세상 모든 치즈 향이 나는 말랑이',
     common:['체다','모짜렐라','고다','브리','카망베르','파르메산','리코타','크림치즈','블루치즈','에멘탈','하바티','고르곤졸라','페타','마스카포네','스트링치즈'],
     rare:['스모크치즈','트러플치즈','숙성고다','블랙트러플브리','금박체다','와인워시드','허브크림치즈'],
     legendary:['전설의 트러플치즈','황금 숙성치즈','치즈의 여왕'],
@@ -934,6 +982,13 @@ const STAGES = STAGE_DEFS.map((def,i)=>({
 const TYPE_MAP = new Map();
 STAGES.forEach(s=> s.types.forEach(t=> TYPE_MAP.set(t.id,t)));
 
+/* 아직 준비되지 않은 이후 단계로의 진입을 막기 위한 공사중 경계선.
+   여기 적힌 값(0-based 단계 인덱스) 이상인 단계는 '공사중'으로 취급해서 퓨즈로 넘어갈 수 없음.
+   즉 STAGES[CONSTRUCTION_LVL] 이상(현재 값 6 → 7단계)부터 잠김.
+   나중에 새 단계 콘텐츠가 준비되면 이 숫자만 늘려주면 됨 */
+const CONSTRUCTION_LVL = 6;
+function isStageLocked(idx){ return idx >= CONSTRUCTION_LVL; }
+
 /* 임의의 도감 만두(type)나 퓨즈 스킨(skin)을 받아 그게 속한 단계(STAGES 엔트리)를 찾아줌.
    type은 .stage(키)로, skin은 .stageIndex(숫자)로 단계를 갖고 있어서 둘 다 대응 */
 function stageOf(item){
@@ -1004,21 +1059,31 @@ function skinRingClass(item){
   const st = skinStyle(item);
   return st==='rainbow' ? 'ring rainbow' : st==='cosmic' ? 'ring cosmic' : st==='galaxy' ? 'ring galaxy' : 'ring legendary';
 }
+/* 은하계(galaxy) 스킨의 "반전색"에 쓰일 보색 각도(원래 색상각 + 180deg) */
+function ghueDeg(item){
+  const hue = (item && typeof item.hue==='number') ? item.hue : 0;
+  return Math.round((hue+180)%360);
+}
+function ghueStyleAttr(item){
+  return skinStyle(item)==='galaxy' ? ('--ghue:'+ghueDeg(item)+'deg;') : '';
+}
 
 /* 퓨즈 도감(스킨): 각 단계를 완성하면 얻는 전용 말랑이 스킨. 외형만 바뀌고 수익은 장착된 도감 만두를 그대로 따름.
    규칙: 2n단계(짝수 번째 단계, 인덱스 기준 홀수 i)는 앞으로 항상 "은하계" 테마로 고정(보라색·하늘색이
-   겹쳐진 링 + 별가루 + 화려한 이펙트). 1~3단계(2n-1, 인덱스 짝수 i)는 기존처럼 무지개 테마를 씀.
-   이 규칙은 이후 무한히 이어지는 단계(퓨즈 계속)에도 동일하게 적용됨 */
+   겹쳐진 링 + 별가루 + 화려한 이펙트). 만두/치즈/버터(인덱스 0,2,4)는 무지개 테마를 쓰되, 눈부심을
+   줄이기 위해 rainbow12 애니메이션의 채도를 낮춰서 적용함(스타일 자체는 그대로 'rainbow') */
 const FUSE_CUSTOM_NAME_POOL = ['모찌','폭신','토실','몰랑','포동','몽실','새콤','달콤','상큼','말랑'];
 function randomFuseCustomName(){ return FUSE_CUSTOM_NAME_POOL[Math.floor(Math.random()*FUSE_CUSTOM_NAME_POOL.length)]; }
 function buildFuseSkin(i, s){
   let name, style = null;
-  if(i===4){
-    name = '무지개 버터'; style = 'rainbow'; // 5단계(색 버터) 퓨즈 완성 전용 스킨
+  if(i===0){
+    name = '무지개 x '+s.mascot; style = 'rainbow';
+  } else if(i===4){
+    name = '무지개 버터'; style = 'rainbow'; // 무지개 이펙트 유지, 대신 CSS 쪽 채도를 낮춰 눈부심을 줄임
+  } else if(i===2){
+    name = '무지개 x '+s.mascot; style = 'rainbow'; // 무지개 이펙트 유지, 대신 CSS 쪽 채도를 낮춰 눈부심을 줄임
   } else if(i%2===1){
     name = '은하계 x '+s.mascot; style = 'galaxy'; // 2n단계: 항상 은하계 고정
-  } else if(i<4){
-    name = '무지개 x '+s.mascot; style = 'rainbow'; // 초반 2n-1단계: 무지개
   } else {
     name = s.title.split('·').length>1 ? s.title.split('·')[1].trim()+' 퓨즈' : s.title+' 퓨즈';
   }
@@ -1082,13 +1147,28 @@ const state = {
   equippedId: null,
   equippedSkinId: null,
   generalSkins: [], /* 퓨즈 완성이 아니라 코드 등으로 얻는 '일반 스킨' 목록 */
-  settings: { muted:false, volume:0.85 },
+  skinDexView: 'fuse', /* '퓨즈 도감/스킨' 탭 안에서 '퓨즈 도감'과 '스킨' 중 어느 쪽을 보여줄지 */
+  settings: { muted:false, volume:0.85, playgroundAlarmMuted:false },
   redeemedCodes: new Set(),
+  playground: { capacity:1, pets:[null] }, /* pets[i] = {typeId, giftReady, bubbleText} | null */
 };
 
 function currentStage(){ return STAGES[state.stageIndex]; }
 function randInt(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
-function fmt(n){ return n.toLocaleString('ko-KR'); }
+/* 코인/가격 표시 포맷: 1,000 미만은 그냥 정수로, 1,000 이상부터는 1000단위씩 끊어서
+   소수점 둘째 자리까지 + 알파벳 단위(a=천, b=백만, c=십억, d=조, e=...)로 표기함.
+   예) 999 → "999" / 1234 → "1.23a" / 1,000,000 → "1.00b" */
+const FMT_UNIT_LETTERS = 'abcdefghijklmnopqrstuvwxyz'.split('');
+function fmt(n){
+  n = Math.round(n||0);
+  if(n < 1000) return n.toLocaleString('ko-KR');
+  let value = n, unitIdx = -1;
+  while(value >= 1000 && unitIdx < FMT_UNIT_LETTERS.length-1){
+    value /= 1000;
+    unitIdx++;
+  }
+  return value.toFixed(2) + FMT_UNIT_LETTERS[unitIdx];
+}
 
 /* ================= CLICK BALANCE ================= */
 /* 밸런스 규칙: "다음 단계의 일반 만두 수익은 반드시 이전 단계의 전설 만두 수익보다 높아야 한다."
@@ -1133,24 +1213,45 @@ function applyStageTheme(idx){
   root.setProperty('--stage-b', t.b);
   root.setProperty('--stage-bg', t.bg);
 }
+/* 원본 말랑이 사진들은 전부 순백색이 아닌 살짝 회색빛 도는 흰 배경이라, multiply
+   블렌딩만으로는 배경이 완전히 사라지지 않고 희미한 흰 테두리가 남는 경우가 있었음.
+   그래서 아래 WHITE_CLEANUP만큼 밝기/대비를 한 번 더 올려서 배경을 순백에 더 가깝게
+   밀어준 뒤 blend-photo(mix-blend-mode:multiply)에 넘김 → 배경이 훨씬 깔끔하게 사라짐 */
+const WHITE_CLEANUP = ' contrast(1.08) brightness(1.05)';
+/* 버터 원본 사진(BUTTER_IMG)은 만두/치즈 사진과 달리 포장 박스 자체가 흰색/크림색에
+   가까워서, 다른 말랑이와 똑같은 강도로 밝기·대비를 계속 겹쳐 올리면(레어/전설로 갈수록,
+   또 단계가 오를수록 더 세짐) 박스 본체까지 순백으로 날아가버림. multiply 블렌딩에서는
+   순백 픽셀이 배경과 합쳐져 사실상 "투명"해지므로, 대비가 강해 끝까지 어둡게 남는
+   인쇄 글씨/로고만 화면에 남는 것처럼 보였던 것임(5~6단계 공통 증상).
+   그래서 버터 사진일 때만 밝기/대비 증가폭을 절반 이하로 눌러서 본체가 살아남게 함 */
+function damp(mult, factor){ return 1 + (mult-1)*factor; }
 function filterFor(type){
-  if(type && type.customFilter) return type.customFilter;
+  const isButterImg = imgFor(type) === BUTTER_IMG;
+  const cleanup = isButterImg ? ' contrast(1.03) brightness(1.015)' : WHITE_CLEANUP;
+  if(type && type.customFilter) return type.customFilter+cleanup;
   let sat = type.rarity==='common' ? 2.1 : type.rarity==='rare' ? 2.7 : 3.2;
   let bri = type.rarity==='common' ? 1.02 : type.rarity==='rare' ? 1.08 : 1.14;
   let con = type.rarity==='common' ? 1.02 : 1.1;
   const idx = stageIdxOf(type);
   sat = sat * (1 + idx*0.04); // 단계가 오를수록 색이 조금씩 더 진해짐
+  if(isButterImg){ bri = damp(bri, 0.35); con = damp(con, 0.35); }
   if(type.colorize){
     /* 원본 사진(만두/치즈)이 어떤 색이든 상관없이 이름이 가리키는 색이 실제로 보이도록,
        먼저 grayscale+sepia로 원본 색을 지우고 그 기준(세피아 색상각 ~30deg)에서
        원하는 색상각까지 회전시킴. 이렇게 해야 "빨강" 만두가 진짜 붉게, "파랑" 만두가
        진짜 푸르게 보임(기존에는 원본 사진 색 위에 단순 회전만 해서 이름과 실제 색이 어긋났음) */
     sat = sat * (type.colorSat!=null ? type.colorSat : 1);
-    bri = bri * (type.colorBri!=null ? type.colorBri : 1);
+    const colorBriMult = type.colorBri!=null ? (isButterImg ? damp(type.colorBri, 0.35) : type.colorBri) : 1;
+    bri = bri * colorBriMult;
     const rot = type.hue - 30;
-    return 'grayscale(1) sepia(1) hue-rotate('+rot+'deg) saturate('+sat.toFixed(2)+') brightness('+bri.toFixed(2)+') contrast('+con+')';
+    return 'grayscale(1) sepia(1) hue-rotate('+rot+'deg) saturate('+sat.toFixed(2)+') brightness('+bri.toFixed(2)+') contrast('+con.toFixed(2)+')'+cleanup;
   }
-  return 'hue-rotate('+type.hue+'deg) saturate('+sat.toFixed(2)+') brightness('+bri+') contrast('+con+')'+stageFilterExtra(idx);
+  /* 단계별 질감 필터(stageFilterExtra)에도 자체 밝기/대비가 들어있어(특히 6단계 커스텀
+     버터), 위의 완화값과 겹치면 다시 날아갈 수 있음. 버터 사진일 땐 세피아 톤(색감)만
+     남기고 밝기/대비 성분은 빼서 겹침을 막음 */
+  const extra = isButterImg ? stageFilterExtra(idx).replace(/contrast\([^)]*\)|brightness\([^)]*\)/g,'').trim() : stageFilterExtra(idx);
+  const extraStr = extra ? ' '+extra : '';
+  return 'hue-rotate('+type.hue+'deg) saturate('+sat.toFixed(2)+') brightness('+bri.toFixed(2)+') contrast('+con.toFixed(2)+')'+extraStr+cleanup;
 }
 /* 먹색/흑진주는 다른 만두들과 달리 항상 바깥 테두리가 사각으로 각져있음(도감/퓨즈 도감 등
    개수로 보여지는 모든 곳에 공통 적용되도록 thumbHtml 한 곳에서 처리) */
@@ -1172,20 +1273,102 @@ function thumbHtml(type, opts){
   const fruitOverlay = fruitBg ? '<span class="fruit-overlay" style="background:'+fruitBg+';"></span>' : '';
   const shapeRadius = (!locked && isSquareShape(type)) ? '10px' : '50%';
   return '<span class="thumb-circle" style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:'+size+'px;height:'+size+'px;border-radius:'+shapeRadius+';background:'+bg+';overflow:hidden;">'+
-    '<img src="'+imgFor(type)+'" class="blend-photo'+extraImgClass+'" style="width:'+inner+'px;height:'+inner+'px;object-fit:contain;filter:'+filter+'" alt="'+(locked?'???':type.name)+'">'+
+    '<img src="'+imgFor(type)+'" class="blend-photo'+extraImgClass+'" style="width:'+inner+'px;height:'+inner+'px;object-fit:contain;filter:'+filter+';'+(locked?'':ghueStyleAttr(type))+'" alt="'+(locked?'???':type.name)+'">'+
     fruitOverlay+
   '</span>';
 }
 
 /* ================= AUDIO ================= */
 let actx=null;
-function ensureAudio(){ if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(actx && actx.state==='suspended'){ actx.resume(); } }
+function ensureAudio(){ if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(actx && actx.state==='suspended'){ actx.resume(); } if(actx) startBGM(); }
 /* 설정 탭의 음소거/볼륨을 모든 효과음에 공통 반영. exponentialRampToValueAtTime은
    0을 목표값으로 쓸 수 없어서 무음이어도 아주 작은 값(0.0001)을 사용함 */
 function soundGain(base){
   if(state.settings && state.settings.muted) return 0.0001;
   const vol = (state.settings && state.settings.volume!=null) ? state.settings.volume : 1;
   return Math.max(0.0001, base*vol);
+}
+/* ================= 배경음악(BGM) ================= */
+/* 평온하고 잔잔한 패드 코드 진행을 계속 순환시켜 아주 작은 볼륨으로 깔아줌.
+   Am7 → Fmaj7 → C → G 를 순서대로 도는 흔한 힐링/로파이풍 코드 진행이고, 각 코드는
+   부드럽게 페이드 인/아웃되며 다음 코드와 살짝 겹쳐 이어져서 끊기는 느낌이 없음.
+   음소거/볼륨 설정은 0.7초마다 마스터 게인에 다시 반영해서 재생 중에도 실시간으로 따라감 */
+let bgmStarted = false;
+let bgmMasterGain = null;
+const BGM_BASE_LEVEL = 0.05; /* 작게 깔리는 배경음악이라 클릭 효과음보다 훨씬 낮은 기본 볼륨 */
+const BGM_CHORDS = [
+  [220.00, 261.63, 329.63, 392.00], /* Am7: A3 C4 E4 G4 */
+  [174.61, 220.00, 261.63, 349.23], /* Fmaj7: F3 A3 C4 F4 */
+  [130.81, 164.81, 196.00, 261.63], /* C: C3 E3 G3 C4 */
+  [196.00, 246.94, 293.66, 392.00]  /* G: G3 B3 D4 G4 */
+];
+function startBGM(){
+  if(bgmStarted || !actx) return;
+  bgmStarted = true;
+  bgmMasterGain = actx.createGain();
+  bgmMasterGain.gain.value = soundGain(BGM_BASE_LEVEL);
+  const lp = actx.createBiquadFilter();
+  lp.type = 'lowpass';
+  lp.frequency.value = 1500;
+  bgmMasterGain.connect(lp).connect(actx.destination);
+  let chordIdx = 0;
+  const dur = 7.6; /* 코드 하나가 유지되는 시간(초) */
+  function playNextChord(){
+    if(!bgmStarted || !actx) return;
+    const chord = BGM_CHORDS[chordIdx % BGM_CHORDS.length];
+    chordIdx++;
+    const t0 = actx.currentTime;
+    chord.forEach((freq, i)=>{
+      const osc = actx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const g = actx.createGain();
+      const peak = 0.22 - i*0.03;
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(peak, t0+2.6);
+      g.gain.setValueAtTime(peak, t0+dur-2.2);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+      osc.connect(g).connect(bgmMasterGain);
+      osc.start(t0); osc.stop(t0+dur+0.15);
+    });
+    setTimeout(playNextChord, (dur-1.2)*1000); /* 다음 코드와 살짝 겹치게 예약 */
+  }
+  playNextChord();
+}
+
+/* ================= 효과음 에코 버스 ================= */
+/* 에코는 모든 말랑이가 아니라, 2n단계 퓨즈 보상인 "은하계" 스킨을 장착 중일 때만
+   적용됨. 그 외에는 기존처럼 원음 그대로(actx.destination) 재생함 */
+let echoBus = null;
+function getEchoBus(){
+  if(!actx) return null;
+  if(echoBus) return echoBus;
+  const bus = actx.createGain();
+  bus.gain.value = 1;
+  const delay = actx.createDelay(1.0);
+  delay.delayTime.value = 0.22;
+  const feedback = actx.createGain();
+  feedback.gain.value = 0.3;
+  const echoLp = actx.createBiquadFilter();
+  echoLp.type = 'lowpass';
+  echoLp.frequency.value = 2600;
+  const wet = actx.createGain();
+  wet.gain.value = 0.32;
+  bus.connect(actx.destination);       // 원음 그대로
+  bus.connect(delay);
+  delay.connect(echoLp);
+  echoLp.connect(feedback);
+  feedback.connect(delay);             // 피드백 루프(반복되며 서서히 잦아듦)
+  echoLp.connect(wet);
+  wet.connect(actx.destination);       // 에코(잔향) 성분
+  echoBus = bus;
+  return bus;
+}
+/* 현재 장착 중인 스킨이 은하계(galaxy) 스킨일 때만 에코 버스를, 그 외에는 일반 출력을 씀 */
+function currentSoundBus(){
+  const skin = getEquippedSkin();
+  if(skin && skin.style==='galaxy') return getEchoBus() || actx.destination;
+  return actx.destination;
 }
 function playPop(pitch, mascot){
   pitch = pitch||1;
@@ -1201,7 +1384,7 @@ function playPop(pitch, mascot){
   gain.gain.setValueAtTime(0.0001, t0);
   gain.gain.exponentialRampToValueAtTime(soundGain(0.28), t0+0.02);
   gain.gain.exponentialRampToValueAtTime(0.0001, t0+0.2);
-  osc.connect(gain).connect(actx.destination);
+  osc.connect(gain).connect(currentSoundBus());
   osc.start(t0); osc.stop(t0+0.22);
 }
 /* 치즈 말랑이 전용 클릭음: 버터의 매끄러운 사인파 멜팅음과 겹치지 않도록, 노이즈를
@@ -1227,7 +1410,7 @@ function playButterSquish(pitch){
   noiseGain.gain.setValueAtTime(0.0001, t0);
   noiseGain.gain.exponentialRampToValueAtTime(soundGain(0.24), t0+0.05);
   noiseGain.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
-  noise.connect(bp).connect(noiseGain).connect(actx.destination);
+  noise.connect(bp).connect(noiseGain).connect(currentSoundBus());
   noise.start(t0); noise.stop(t0+dur);
 
   const osc = actx.createOscillator();
@@ -1238,7 +1421,7 @@ function playButterSquish(pitch){
   oscGain.gain.setValueAtTime(0.0001, t0);
   oscGain.gain.exponentialRampToValueAtTime(soundGain(0.18), t0+0.04);
   oscGain.gain.exponentialRampToValueAtTime(0.0001, t0+0.32);
-  osc.connect(oscGain).connect(actx.destination);
+  osc.connect(oscGain).connect(currentSoundBus());
   osc.start(t0); osc.stop(t0+0.34);
 }
 /* 버터 말랑이 전용 클릭음: 치즈의 출렁이는 물결과 달리, 사인파 + 로우패스 필터가
@@ -1259,7 +1442,7 @@ function playCheeseSquish(pitch){
   gain.gain.setValueAtTime(0.0001, t0);
   gain.gain.exponentialRampToValueAtTime(soundGain(0.32), t0+0.02);
   gain.gain.exponentialRampToValueAtTime(0.0001, t0+0.36);
-  osc.connect(lp).connect(gain).connect(actx.destination);
+  osc.connect(lp).connect(gain).connect(currentSoundBus());
   osc.start(t0); osc.stop(t0+0.38);
 }
 /* 키캡 스킨 전용 클릭음: 다른 스킨들의 부드러운 '말랑' 소리와 달리, 기계식 키보드
@@ -1288,7 +1471,7 @@ function playKeycapClack(pitch){
     ng.gain.setValueAtTime(0.0001, t);
     ng.gain.exponentialRampToValueAtTime(soundGain(idx===0 ? 0.32 : 0.24), t+0.004);
     ng.gain.exponentialRampToValueAtTime(0.0001, t+dur);
-    noise.connect(bp).connect(ng).connect(actx.destination);
+    noise.connect(bp).connect(ng).connect(currentSoundBus());
     noise.start(t); noise.stop(t+dur);
 
     const osc = actx.createOscillator();
@@ -1299,7 +1482,7 @@ function playKeycapClack(pitch){
     og.gain.setValueAtTime(0.0001, t);
     og.gain.exponentialRampToValueAtTime(soundGain(0.14), t+0.006);
     og.gain.exponentialRampToValueAtTime(0.0001, t+0.06);
-    osc.connect(og).connect(actx.destination);
+    osc.connect(og).connect(currentSoundBus());
     osc.start(t); osc.stop(t+0.07);
   });
 }
@@ -1314,7 +1497,7 @@ function playChime(rarity){
     gain.gain.setValueAtTime(0.0001,t0);
     gain.gain.exponentialRampToValueAtTime(soundGain(0.22),t0+0.02);
     gain.gain.exponentialRampToValueAtTime(0.0001,t0+0.4);
-    osc.connect(gain).connect(actx.destination);
+    osc.connect(gain).connect(currentSoundBus());
     osc.start(t0); osc.stop(t0+0.45);
   });
 }
@@ -1578,6 +1761,8 @@ function buyItem(typeId){
 }
 function attemptFuse(){
   const stage = currentStage();
+  const nextIdx = state.stageIndex+1;
+  if(isStageLocked(nextIdx)){ toast((nextIdx+1)+'단계는 아직 공사중입니다. 조금만 기다려주세요!'); return; }
   const req = stage.fuseReq;
   const all = req.commons.concat(req.rares, req.legendaries);
   const missing = all.filter(id => (state.inventory[id]||0) < 1);
@@ -1598,11 +1783,9 @@ function advanceStage(){
   state.stageIndex = nextIdx;
   state.activeTab = 'gacha';
   state.dexStageView = nextIdx;
-  /* 뽑기 카테고리(gachaStageView)는 더 이상 자동으로 다음 단계로 넘기지 않음.
-     예전에는 여기서 강제로 다음 단계 카테고리로 바꿔버려서, 보유 중이던 레어/전설
-     뽑기권이 플레이어 의도와 상관없이 새 단계 카테고리에 묶여 소모되는 문제가 있었음.
-     이제는 플레이어가 보고 있던 카테고리를 그대로 유지하고, 원하면 햄버거 메뉴에서
-     직접 새 단계 카테고리를 선택하도록 함 */
+  /* 퓨즈에 성공하면 뽑기 햄버거 메뉴(gachaStageView)도 방금 새로 열린 다음 단계
+     카테고리로 자동 전환함 */
+  state.gachaStageView = nextIdx;
   renderAll();
 }
 
@@ -1776,6 +1959,160 @@ function renderDexPanel(){
     '<div class="dex-grid">'+items+'</div>';
 }
 
+/* ================= PLAYGROUND (놀이터) ================= */
+/* 평상시 랜덤하게 뜨는 말풍선 대사 20종 */
+const PLAYGROUND_IDLE_LINES = [
+  '말랑말랑~', '오늘도 좋은 날이야!', '여기 놀이터 좋다~', '심심해 심심해',
+  '같이 놀아줄래?', '쭈욱~ 늘어나는 기분!', '낮잠 자고 싶어…', '코인 냄새가 난다?!',
+  '폭신폭신 기분 최고', '다음 단계 궁금해~', '친구들이 그리워', '도감 구경하고 왔어',
+  '말랑말랑 춤출래!', '배고파 배고파~', '여기 볕이 좋다', '간질간질해!',
+  '뽀시래기 기분이야', '탱글탱글~', '너랑 있어서 좋아', '오늘 만두 소식 있어?'
+];
+/* 말풍선을 직접 눌렀을 때 나오는 반응 5종(선물 상태가 아닐 때) */
+const PLAYGROUND_TAP_LINES = [
+  '꺄앙! 놀랐잖아~', '히히, 간지러워!', '또 눌러줘~', '말랑말랑 반응 완료!', '튕겨져 나갈 뻔했어!'
+];
+const PLAYGROUND_GIFT_LINE = '🎁 선물이 도착했어요! 눌러보세요';
+const PLAYGROUND_GIFT_THANKS = '고마워! 다음에 또 줄게~';
+const playgroundTimers = {}; /* {slotIdx:{idle,gift,tapReset}} */
+
+function pgRandIdle(){ return PLAYGROUND_IDLE_LINES[randInt(0,PLAYGROUND_IDLE_LINES.length-1)]; }
+function clearPlaygroundTimers(slotIdx){
+  const t = playgroundTimers[slotIdx];
+  if(t){ clearTimeout(t.idle); clearTimeout(t.gift); clearTimeout(t.tapReset); }
+  playgroundTimers[slotIdx] = {};
+}
+function setBubbleText(slotIdx, text){
+  const slot = state.playground.pets[slotIdx];
+  if(!slot) return;
+  slot.bubbleText = text;
+  const el = document.querySelector('[data-bubble="'+slotIdx+'"]');
+  if(el) el.textContent = text;
+}
+/* 2분~2분30초(120000~150000ms)마다 선물 말풍선 등장 */
+function scheduleGift(slotIdx){
+  const t = playgroundTimers[slotIdx] || (playgroundTimers[slotIdx]={});
+  clearTimeout(t.gift);
+  t.gift = setTimeout(()=>{
+    const slot = state.playground.pets[slotIdx];
+    if(!slot) return;
+    slot.giftReady = true;
+    setBubbleText(slotIdx, PLAYGROUND_GIFT_LINE);
+    const el = document.querySelector('[data-bubble="'+slotIdx+'"]');
+    if(el) el.classList.add('gift');
+    playChime('rare');
+  }, randInt(120000, 150000));
+}
+/* 4~7.5초마다 평상시 대사 20종 중 하나를 랜덤 표시 */
+function scheduleIdle(slotIdx){
+  const t = playgroundTimers[slotIdx] || (playgroundTimers[slotIdx]={});
+  clearTimeout(t.idle);
+  t.idle = setTimeout(()=>{
+    const slot = state.playground.pets[slotIdx];
+    if(!slot){ return; }
+    if(!slot.giftReady) setBubbleText(slotIdx, pgRandIdle());
+    scheduleIdle(slotIdx);
+  }, randInt(4000, 7500));
+}
+function assignPet(slotIdx, typeId){
+  state.playground.pets[slotIdx] = { typeId, giftReady:false, bubbleText:pgRandIdle() };
+  clearPlaygroundTimers(slotIdx);
+  scheduleIdle(slotIdx);
+  scheduleGift(slotIdx);
+  renderPanel();
+}
+function removePet(slotIdx){
+  clearPlaygroundTimers(slotIdx);
+  state.playground.pets[slotIdx] = null;
+  renderPanel();
+}
+/* 선물 마일리지: 현재 해금한 최상위 단계(진행 중인 단계) 기준, 일반 95% / 레어 5% / 전설 없음 */
+function claimPlaygroundGift(slotIdx){
+  const slot = state.playground.pets[slotIdx];
+  if(!slot || !slot.giftReady) return;
+  slot.giftReady = false;
+  const stage = currentStage();
+  const rarity = Math.random() < 0.95 ? 'common' : 'rare';
+  addMileage(stage.key, rarity, 2);
+  playChime(rarity);
+  toast('선물 도착! '+stage.title.split('·')[1].trim()+' '+RARITY_LABEL[rarity]+' 마일리지 +2');
+  const el = document.querySelector('[data-bubble="'+slotIdx+'"]');
+  if(el) el.classList.remove('gift');
+  setBubbleText(slotIdx, PLAYGROUND_GIFT_THANKS);
+  scheduleGift(slotIdx);
+  if(state.activeTab==='gacha') renderPanel(); /* 마일리지 보드가 보이는 중이면 새로고침 */
+}
+function onPetBubbleClick(slotIdx){
+  const slot = state.playground.pets[slotIdx];
+  if(!slot) return;
+  ensureAudio();
+  if(slot.giftReady){ claimPlaygroundGift(slotIdx); return; }
+  const type = TYPE_MAP.get(slot.typeId);
+  playPop(1.05, type ? mascotFor(type) : undefined);
+  setBubbleText(slotIdx, PLAYGROUND_TAP_LINES[randInt(0,PLAYGROUND_TAP_LINES.length-1)]);
+  const t = playgroundTimers[slotIdx] || (playgroundTimers[slotIdx]={});
+  clearTimeout(t.tapReset);
+  t.tapReset = setTimeout(()=>{
+    const s = state.playground.pets[slotIdx];
+    if(s && !s.giftReady) setBubbleText(slotIdx, pgRandIdle());
+  }, 2200);
+}
+function closePlaygroundPick(){ document.getElementById('playgroundPickOverlay').classList.remove('show'); }
+/* 놀이터 펫은 도감에 등록된 말랑이(도감 만두)만 선택 가능 - 퓨즈 스킨/일반 스킨은 제외 */
+function openPlaygroundPick(slotIdx){
+  state.playgroundPickSlot = slotIdx;
+  const grid = document.getElementById('playgroundPickGrid');
+  const owned = Array.from(state.dex).map(id=>TYPE_MAP.get(id)).filter(Boolean);
+  if(owned.length===0){
+    grid.innerHTML = '<div class="fusedex-empty" style="grid-column:1/-1;">아직 도감에 등록된 말랑이가 없어요.<br>뽑기로 먼저 말랑이를 모아보세요!</div>';
+  } else {
+    grid.innerHTML = owned.map(type=>{
+      const ringClass = ringClassFor(type);
+      return '<div class="dex-item" data-pickpet="'+type.id+'" style="cursor:pointer;">'+
+        '<div class="dex-thumb-wrap">'+(ringClass?'<div class="'+ringClass+'"></div>':'')+thumbHtml(type,{size:56})+'</div>'+
+        '<div class="dex-name">'+type.name+'</div>'+
+        '<div class="dex-rarity '+type.rarity+'">'+RARITY_LABEL[type.rarity]+'</div>'+
+      '</div>';
+    }).join('');
+    grid.querySelectorAll('[data-pickpet]').forEach(el=>{
+      el.onclick = ()=>{ ensureAudio(); assignPet(state.playgroundPickSlot, el.dataset.pickpet); closePlaygroundPick(); };
+    });
+  }
+  document.getElementById('playgroundPickOverlay').classList.add('show');
+}
+document.getElementById('playgroundPickClose').onclick = closePlaygroundPick;
+/* 저장/불러오기 이후 등, 상태만 있고 타이머가 없는 슬롯들을 다시 스케줄함 */
+function reschedulePlaygroundTimers(){
+  Object.keys(playgroundTimers).forEach(k=> clearPlaygroundTimers(k));
+  (state.playground.pets||[]).forEach((slot,i)=>{
+    if(slot){ scheduleIdle(i); scheduleGift(i); }
+  });
+}
+
+function renderPlaygroundPanel(){
+  const pg = state.playground;
+  const slotsHtml = pg.pets.map((slot,i)=>{
+    if(!slot){
+      return '<div class="playground-slot empty">'+
+        '<div class="playground-add" data-emptyslot="'+i+'">'+ICONS.park+'<div>말랑이 놓기</div></div>'+
+      '</div>';
+    }
+    const type = TYPE_MAP.get(slot.typeId);
+    if(!type){
+      return '<div class="playground-slot empty"><div class="playground-add" data-emptyslot="'+i+'">'+ICONS.park+'<div>말랑이 놓기</div></div></div>';
+    }
+    return '<div class="playground-slot filled">'+
+      '<button class="playground-remove" data-removepet="'+i+'">'+ICONS.x+'</button>'+
+      '<div class="playground-bubble'+(slot.giftReady?' gift':'')+'" data-bubble="'+i+'" data-tappet="'+i+'">'+(slot.bubbleText||pgRandIdle())+'</div>'+
+      '<div class="playground-pet-wrap" data-tappet="'+i+'">'+thumbHtml(type,{size:72})+'</div>'+
+      '<div class="dex-name">'+type.name+' '+mascotFor(type)+'</div>'+
+    '</div>';
+  }).join('');
+  return '<h2>놀이터</h2>'+
+    '<div class="lead">도감에 등록된 말랑이를 놀이터에 펫처럼 놓아보세요. 말풍선을 눌러 반응을 보고, 2~2분 30초마다 뜨는 선물 말풍선을 눌러 마일리지를 받으세요</div>'+
+    '<div class="playground-grid">'+slotsHtml+'</div>';
+}
+
 function renderFusePanel(){
   const stage = currentStage();
   const req = stage.fuseReq;
@@ -1800,8 +2137,11 @@ function renderFusePanel(){
   }
 
   const mascot = stage.mascot;
+  const nextIdx = state.stageIndex+1;
+  const locked = isStageLocked(nextIdx);
   let btnLabel = '퓨즈 '+mascot+' 완성하기 → 다음 단계';
-  if(!matReady) btnLabel = '재료를 모두 모아주세요';
+  if(locked) btnLabel = (nextIdx+1)+'단계는 공사중입니다';
+  else if(!matReady) btnLabel = '재료를 모두 모아주세요';
   else if(!canAfford) btnLabel = '코인이 부족합니다 ('+fmt(cost)+' 필요)';
 
   return '<h2>퓨즈</h2>'+
@@ -1811,7 +2151,7 @@ function renderFusePanel(){
     group('일반 '+mascot, req.commons)+
     group('레어 '+mascot, req.rares)+
     group('전설 '+mascot, req.legendaries)+
-    '<button class="btn btn-primary fuse-cta" id="btnFuse" '+(ready?'':'disabled')+'>'+btnLabel+'</button>';
+    '<button class="btn btn-primary fuse-cta" id="btnFuse" '+((ready&&!locked)?'':'disabled')+'>'+btnLabel+'</button>';
 }
 
 function shopCountdownText(stage){
@@ -1846,20 +2186,25 @@ function renderFuseDexPanel(){
   const fuseItems = FUSE_SKINS.slice(0, completedCount);
   const generalItems = state.generalSkins || [];
   if(fuseItems.length<=0 && generalItems.length<=0){
-    return '<h2>퓨즈 도감 & 스킨</h2>'+
+    return '<h2>스킨</h2>'+
       '<div class="lead">완성한 퓨즈 만두나 코드로 얻은 스킨을 장착할 수 있어요</div>'+
       '<div class="fusedex-empty">'+ICONS.trophy+
       '<div>아직 보유한 스킨이 없어요.<br>퓨즈 탭에서 재료를 모아 첫 퓨즈를 완성하거나, 설정에서 코드를 입력해보세요!</div>'+
       '</div>';
   }
+  const view = state.skinDexView==='general' ? 'general' : 'fuse';
   const fuseHtml = fuseItems.map(skin=> fuseDexSkinCard(skin, STAGES[skin.stageIndex].title.split('·')[0].trim()+' 완성 스킨')).join('');
   const generalHtml = generalItems.map(skin=> fuseDexSkinCard(skin, '일반 스킨')).join('');
-  return '<h2>퓨즈 도감 & 스킨</h2>'+
+  const body = view==='fuse'
+    ? (fuseHtml ? '<div class="fusedex-grid">'+fuseHtml+'</div>' : '<div class="fusedex-empty" style="padding:16px;">아직 완성한 퓨즈 스킨이 없어요.</div>')
+    : (generalHtml ? '<div class="fusedex-grid">'+generalHtml+'</div>' : '<div class="fusedex-empty" style="padding:16px;">코드를 입력하면 일반 스킨을 얻을 수 있어요.</div>');
+  return '<h2>스킨</h2>'+
     '<div class="lead">외형만 바뀌는 스킨이에요. 클릭 수익은 도감에서 장착한 만두 등급을 그대로 따릅니다</div>'+
-    '<div class="fuse-group-title">퓨즈 스킨 ('+fuseItems.length+')</div>'+
-    (fuseHtml ? '<div class="fusedex-grid">'+fuseHtml+'</div>' : '<div class="fusedex-empty" style="padding:16px;">아직 완성한 퓨즈 스킨이 없어요.</div>')+
-    '<div class="fuse-group-title" style="margin-top:16px;">일반 스킨 ('+generalItems.length+')</div>'+
-    (generalHtml ? '<div class="fusedex-grid">'+generalHtml+'</div>' : '<div class="fusedex-empty" style="padding:16px;">코드를 입력하면 일반 스킨을 얻을 수 있어요.</div>');
+    '<div class="dex-tabs">'+
+      '<button class="dex-tab'+(view==='fuse'?' active':'')+'" data-skindexview="fuse">퓨즈 도감 ('+fuseItems.length+')</button>'+
+      '<button class="dex-tab'+(view==='general'?' active':'')+'" data-skindexview="general">스킨 ('+generalItems.length+')</button>'+
+    '</div>'+
+    body;
 }
 
 /* ================= SAVE CODE SYSTEM ================= */
@@ -1881,7 +2226,8 @@ function exportSaveCode(){
     equippedSkinId: state.equippedSkinId,
     generalSkins: state.generalSkins||[],
     redeemedCodes: Array.from(state.redeemedCodes||[]),
-    settings: state.settings
+    settings: state.settings,
+    playground: state.playground
   };
   return SAVE_CODE_PREFIX + b64EncodeUnicode(JSON.stringify(payload));
 }
@@ -1901,9 +2247,11 @@ function importSaveCode(code){
     state.equippedSkinId = payload.equippedSkinId||null;
     state.generalSkins = payload.generalSkins||[];
     state.redeemedCodes = new Set(payload.redeemedCodes||[]);
-    if(payload.settings) state.settings = Object.assign({muted:false, volume:0.85}, payload.settings);
+    if(payload.settings) state.settings = Object.assign({muted:false, volume:0.85, playgroundAlarmMuted:false}, payload.settings);
+    state.playground = payload.playground || { capacity:1, pets:[null] };
     state.gachaStageView = state.stageIndex;
     state.dexStageView = state.stageIndex;
+    reschedulePlaygroundTimers();
     return true;
   }catch(e){ return false; }
 }
@@ -1944,41 +2292,14 @@ function submitCode(){
     inputEl.value='';
     return;
   }
-  if(raw.toLowerCase()==='unvulmandu'){
+  if(raw.toLowerCase()==='reality'){
     if(!state.redeemedCodes) state.redeemedCodes = new Set();
+    if(state.redeemedCodes.has('reality')){ toast('이미 사용한 코드입니다'); return; }
+    createRealitySkin();
     inputEl.value='';
-    const fileInput = document.getElementById('hiddenSkinFileInput');
-    if(fileInput){
-      toast('내 사진(img.png)을 선택해주세요');
-      fileInput.click();
-    } else {
-      toast('이 기기에서는 파일을 선택할 수 없어요');
-    }
     return;
   }
   toast('유효하지 않은 코드입니다');
-}
-/* unvulmandu 코드: 로컬 이미지를 골라 만두 필터를 입힌 '일반 스킨'을 만듦(퓨즈 완성 스킨과
-   달리 퓨즈 도감 & 스킨 탭의 '일반 스킨' 쪽에 들어감) */
-const UNVULMANDU_FILTER = 'sepia(0.25) saturate(1.35) contrast(1.08) brightness(1.05)';
-function createUnvulmanduSkin(dataUrl){
-  if(!state.redeemedCodes) state.redeemedCodes = new Set();
-  state.redeemedCodes.add('unvulmandu');
-  const skin = {
-    id:'genskin-unvulmandu',
-    name:'만두 말랑이',
-    desc:'unvulmandu 코드로 만든 나만의 만두 스킨',
-    rarity:'legendary',
-    customImg: dataUrl,
-    customFilter: UNVULMANDU_FILTER,
-    customMascot:'만두'
-  };
-  if(!state.generalSkins) state.generalSkins = [];
-  state.generalSkins = state.generalSkins.filter(g=>g.id!==skin.id);
-  state.generalSkins.push(skin);
-  playChime('legendary');
-  toast('일반 스킨 "만두 말랑이"를 생성했습니다!');
-  renderAll();
 }
 /* keycap 코드: 기계식 키보드 스위치 사진으로 만든 '일반 스킨'. 원본이 흰 배경이라
    다른 이미지들과 동일하게 blend-photo(mix-blend-mode:multiply) 렌더링을 그대로 타서
@@ -2002,6 +2323,27 @@ function createKeycapSkin(){
   state.generalSkins.push(skin);
   playChime('legendary');
   toast('일반 스킨 "키캡 말랑이"를 획득했습니다!');
+  renderAll();
+}
+/* reality 코드: 지정된 사진으로 만든 '일반 스킨'. customMascot을 따로 지정하지 않아서
+   mascotFor()가 기본값 '만두'를 돌려주고, 그 결과 playPop()도 치즈/버터/키캡 분기를
+   타지 않고 원래 만두 말랑이의 기본 클릭음을 그대로 냄 */
+function createRealitySkin(){
+  if(!state.redeemedCodes) state.redeemedCodes = new Set();
+  state.redeemedCodes.add('reality');
+  const skin = {
+    id:'genskin-reality',
+    name:'만두',
+    desc:'reality 코드로 얻은 스킨',
+    rarity:'legendary',
+    customImg: REALITY_IMG,
+    customFilter: 'saturate(1.08) contrast(1.05) brightness(1.02)'
+  };
+  if(!state.generalSkins) state.generalSkins = [];
+  state.generalSkins = state.generalSkins.filter(g=>g.id!==skin.id);
+  state.generalSkins.push(skin);
+  playChime('legendary');
+  toast('일반 스킨 "만두"를 획득했습니다!');
   renderAll();
 }
 function generateSaveCode(){
@@ -2033,6 +2375,9 @@ function renderSettingsPanel(){
         '<span id="volLabel">'+Math.round(s.volume*100)+'%</span>'+
       '</div>'+
     '</div>'+
+    '<div class="settings-row" style="margin-top:10px;">'+
+      '<button class="btn '+(s.playgroundAlarmMuted?'btn-outline':'btn-ghost')+'" id="btnTogglePgAlarm">'+(s.playgroundAlarmMuted?'놀이터 알람소리 켜기':'놀이터 알람소리 끄기')+'</button>'+
+    '</div>'+
   '</div>'+
   '<div class="settings-section">'+
     '<div class="settings-title">코드 입력</div>'+
@@ -2054,6 +2399,7 @@ function renderSettingsPanel(){
 function renderPanel(){
   const panel = document.getElementById('panel');
   if(state.activeTab==='gacha') panel.innerHTML = renderGachaPanel();
+  else if(state.activeTab==='playground') panel.innerHTML = renderPlaygroundPanel();
   else if(state.activeTab==='dex') panel.innerHTML = renderDexPanel();
   else if(state.activeTab==='fuse') panel.innerHTML = renderFusePanel();
   else if(state.activeTab==='fusedex') panel.innerHTML = renderFuseDexPanel();
@@ -2081,6 +2427,16 @@ function attachPanelEvents(){
     if(byId('btnCraftRareTicket')) byId('btnCraftRareTicket').onclick = craftRareTicket;
     if(byId('btnCraftLegendaryTicket')) byId('btnCraftLegendaryTicket').onclick = craftLegendaryTicket;
     if(byId('btnFillRareFromLegendary')) byId('btnFillRareFromLegendary').onclick = fillRareFromLegendary;
+  } else if(state.activeTab==='playground'){
+    document.querySelectorAll('[data-emptyslot]').forEach(el=>{
+      el.onclick = ()=>{ ensureAudio(); openPlaygroundPick(parseInt(el.dataset.emptyslot,10)); };
+    });
+    document.querySelectorAll('[data-removepet]').forEach(el=>{
+      el.onclick = (e)=>{ e.stopPropagation(); removePet(parseInt(el.dataset.removepet,10)); };
+    });
+    document.querySelectorAll('[data-tappet]').forEach(el=>{
+      el.onclick = ()=> onPetBubbleClick(parseInt(el.dataset.tappet,10));
+    });
   } else if(state.activeTab==='dex'){
     document.querySelectorAll('[data-dexstage]').forEach(btn=>{
       btn.onclick = ()=>{ state.dexStageView = parseInt(btn.dataset.dexstage,10); renderPanel(); };
@@ -2100,6 +2456,9 @@ function attachPanelEvents(){
   } else if(state.activeTab==='fuse'){
     if(byId('btnFuse')) byId('btnFuse').onclick = attemptFuse;
   } else if(state.activeTab==='fusedex'){
+    document.querySelectorAll('[data-skindexview]').forEach(btn=>{
+      btn.onclick = ()=>{ state.skinDexView = btn.dataset.skindexview; renderPanel(); };
+    });
     document.querySelectorAll('[data-equipskin]').forEach(btn=>{
       btn.onclick = ()=>{
         ensureAudio();
@@ -2123,6 +2482,10 @@ function attachPanelEvents(){
       state.settings.volume = Number(e.target.value)/100;
       const lbl = document.getElementById('volLabel');
       if(lbl) lbl.textContent = e.target.value+'%';
+    };
+    if(byId('btnTogglePgAlarm')) byId('btnTogglePgAlarm').onclick = ()=>{
+      state.settings.playgroundAlarmMuted = !state.settings.playgroundAlarmMuted;
+      renderPanel();
     };
     if(byId('btnSubmitCode')) byId('btnSubmitCode').onclick = submitCode;
     if(byId('codeInput')) byId('codeInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') submitCode(); });
@@ -2251,7 +2614,7 @@ dumplingBtn.addEventListener('click', (e)=>{
   const rect = dumplingBtn.getBoundingClientRect();
   const x = (e.clientX!==undefined ? e.clientX - rect.left : rect.width/2) - 10;
   const y = (e.clientY!==undefined ? e.clientY - rect.top : rect.height/2) - 10;
-  spawnFloat(x, y, '+'+gain, crit);
+  spawnFloat(x, y, '+'+fmt(gain), crit);
 
   dumplingImg.classList.remove('squish');
   void dumplingImg.offsetWidth;
@@ -2273,11 +2636,14 @@ function tintHero(){
   } else {
     dumplingImg.style.filter = 'saturate(1.1)';
   }
-  dumplingImg.classList.remove('rainbow-img','cosmic-img');
+  dumplingImg.classList.remove('rainbow-img','cosmic-img','galaxy-img');
   const st = skinStyle(skin);
   if(st==='rainbow') dumplingImg.classList.add('rainbow-img');
   else if(st==='cosmic') dumplingImg.classList.add('cosmic-img');
+  else if(st==='galaxy') dumplingImg.classList.add('galaxy-img');
   else if(!skin && eq && eq.rainbowEffect) dumplingImg.classList.add('rainbow-img');
+  if(st==='galaxy') dumplingImg.style.setProperty('--ghue', ghueDeg(skin)+'deg');
+  else dumplingImg.style.removeProperty('--ghue');
   const heroFruitOv = document.getElementById('heroFruitOverlay');
   const heroFruitBg = skin ? null : fruitOverlayBg(eq); // 스킨을 장착 중이면 도감 과일 무늬 대신 스킨 외형 우선
   if(heroFruitBg){ heroFruitOv.style.background = heroFruitBg; heroFruitOv.style.display = 'block'; }
@@ -2329,6 +2695,14 @@ function spawnBonusMallang(){
   const visual = skin || eq;
   bonusImgEl.src = visual ? imgFor(visual) : currentStage().img;
   bonusImgEl.style.filter = visual ? filterFor(visual) : 'saturate(1.3)';
+  bonusImgEl.classList.remove('rainbow-img','cosmic-img','galaxy-img');
+  const st = skinStyle(skin);
+  if(st==='rainbow') bonusImgEl.classList.add('rainbow-img');
+  else if(st==='cosmic') bonusImgEl.classList.add('cosmic-img');
+  else if(st==='galaxy') bonusImgEl.classList.add('galaxy-img');
+  else if(!skin && eq && eq.rainbowEffect) bonusImgEl.classList.add('rainbow-img');
+  if(st==='galaxy') bonusImgEl.style.setProperty('--ghue', ghueDeg(skin)+'deg');
+  else bonusImgEl.style.removeProperty('--ghue');
   placeBonusRandomly();
   bonusEl.classList.remove('leaving');
   bonusEl.classList.add('show');
@@ -2396,6 +2770,10 @@ window.jumpToStage = jumpToStage;
 
 /* ================= INTERVALS ================= */
 setInterval(()=>{
+  if(bgmMasterGain) bgmMasterGain.gain.value = soundGain(BGM_BASE_LEVEL);
+}, 700);
+
+setInterval(()=>{
   if(state.activeTab==='fuse'){
     const el = document.getElementById('fuseCountdown');
     if(el) el.textContent = fuseCountdownText(currentStage());
@@ -2409,19 +2787,6 @@ setInterval(()=>{
   if(state.activeTab==='fuse'){ renderPanel(); toast('퓨즈 재료가 갱신되었습니다'); }
 }, 60000);
 
-/* ================= HIDDEN SKIN FILE INPUT ================= */
-const hiddenSkinFileInput = document.getElementById('hiddenSkinFileInput');
-if(hiddenSkinFileInput){
-  hiddenSkinFileInput.addEventListener('change', (e)=>{
-    const file = e.target.files && e.target.files[0];
-    hiddenSkinFileInput.value = '';
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = ()=> createUnvulmanduSkin(reader.result);
-    reader.onerror = ()=> toast('이미지를 불러오지 못했습니다');
-    reader.readAsDataURL(file);
-  });
-}
 
 /* ================= INIT ================= */
 initStageRuntime(0);
