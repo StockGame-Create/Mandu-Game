@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Malang 1.8</title>
+<title>Malang 1.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -2001,6 +2001,8 @@ function advanceStage(){
   initStageRuntime(nextIdx);
   showStageClear(finished, STAGES[nextIdx]);
   state.stageIndex = nextIdx;
+  state.ticketsRare = 0;
+  state.ticketsLegendary = 0;
   state.activeTab = 'gacha';
   state.dexStageView = nextIdx;
   /* 퓨즈에 성공하면 뽑기 햄버거 메뉴(gachaStageView)도 방금 새로 열린 다음 단계
