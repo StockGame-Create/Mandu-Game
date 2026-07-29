@@ -49,7 +49,12 @@
     position:fixed;
     inset:0;
     width:100%;
+    word-break:keep-all;       /* 한글 단어 중간에서 이상하게 끊기는 것 방지 */
+    overflow-wrap:break-word;
+    -webkit-font-smoothing:antialiased;
   }
+  /* 숫자는 자릿수가 바뀌어도 폭이 흔들리지 않도록 고정폭 처리 */
+  #coinCount,#gemCount,#ticketCount,.st-num,.mb-num{ font-variant-numeric:tabular-nums; }
   h1,h2,h3, .display{ font-family:'Jua','Noto Sans KR',sans-serif; font-weight:400; }
   #app{
     max-width:720px; margin:0 auto;
@@ -68,13 +73,14 @@
   }
   .brand{ display:flex; align-items:center; gap:8px; }
   .brand .badge-dot{ width:10px;height:10px;border-radius:50%; background:var(--chili); box-shadow:0 0 0 3px var(--legend-bg);}
-  .brand h1{ font-size:22px; margin:0; letter-spacing:0.5px; color:var(--ink); }
+  .brand h1{ font-size:clamp(17px,5vw,22px); margin:0; letter-spacing:0.5px; color:var(--ink); }
   .brand .sub{ font-size:11px; color:var(--ink-soft); margin-top:-2px; }
-  .stats{ display:flex; gap:8px; }
+  .stats{ display:flex; gap:6px; }
   .stat-pill{
-    display:flex; align-items:center; gap:6px;
+    display:flex; align-items:center; gap:5px;
     background:var(--paper); border:1.5px solid var(--line); border-radius:999px;
-    padding:6px 12px 6px 8px; box-shadow:var(--shadow); font-weight:700; font-size:14px;
+    padding:6px 10px 6px 8px; box-shadow:var(--shadow); font-weight:700;
+    font-size:clamp(11.5px,3.2vw,14px);
     white-space:nowrap;
   }
   .stat-pill .ic{ color:var(--gold); display:flex; }
@@ -291,15 +297,21 @@
   .gacha-card .g-odds{ font-size:11px; color:var(--ink-soft); }
   .btn{
     border:none; border-radius:10px; padding:9px 16px; font-weight:700; font-size:13px;
-    cursor:pointer; font-family:'Noto Sans KR'; transition:transform .1s ease, opacity .15s;
+    cursor:pointer; font-family:'Noto Sans KR';
+    transition:transform .08s ease, box-shadow .08s ease, opacity .15s;
     white-space:nowrap; touch-action:manipulation;
+    min-height:40px;
   }
-  .btn:active{ transform:scale(0.96); }
-  .btn-primary{ background:var(--chili); color:#fff; }
-  .btn-primary:disabled{ background:#d8cfc0; color:#948a7c; cursor:not-allowed; }
-  .btn-ghost{ background:var(--ink); color:#fff; }
-  .btn-ghost:disabled{ background:#d8cfc0; color:#948a7c; cursor:not-allowed; }
+  .btn:active{ transform:translateY(2px) scale(0.98); }
+  .btn-primary{ background:var(--chili); color:#fff; box-shadow:0 3px 0 var(--chili-dark); }
+  .btn-primary:active{ box-shadow:0 1px 0 var(--chili-dark); }
+  .btn-primary:disabled{ background:#d8cfc0; color:#948a7c; cursor:not-allowed; box-shadow:0 3px 0 #b9ae9b; }
+  .btn-ghost{ background:var(--ink); color:#fff; box-shadow:0 3px 0 #14100d; }
+  .btn-ghost:active{ box-shadow:0 1px 0 #14100d; }
+  .btn-ghost:disabled{ background:#d8cfc0; color:#948a7c; cursor:not-allowed; box-shadow:0 3px 0 #b9ae9b; }
   .btn-outline{ background:transparent; border:1.5px solid var(--line); color:var(--ink); }
+  .btn-outline:active{ background:var(--common-bg); transform:scale(0.97); }
+  .btn-sm{ min-height:34px; }
 
   .craft-row{
     display:flex; align-items:center; gap:12px; border:1.5px dashed var(--line);
@@ -443,7 +455,7 @@
   .fuse-item{ border:1.5px solid var(--line); border-radius:10px; padding:6px 4px; text-align:center; background:#fff; position:relative;}
   .fuse-item.have{ border-color:var(--bamboo); background:var(--common-bg); }
   .fuse-item img{ width:34px;height:34px;object-fit:contain; border-radius:50%; background:var(--cream); padding:3px;}
-  .fuse-item .fname{ font-size:9.5px; margin-top:3px; font-weight:700; line-height:1.15; }
+  .fuse-item .fname{ font-size:10.5px; margin-top:3px; font-weight:700; line-height:1.2; }
   .fuse-check{ position:absolute; top:2px; right:3px; color:var(--bamboo-dark); }
   .fuse-cta{ width:100%; margin-top:16px; padding:14px; font-size:15px; border-radius:14px; }
 
@@ -470,8 +482,8 @@
   .fusedex-item.equipped{ border-color:var(--gold); box-shadow:0 0 0 2px var(--gold) inset; }
   .fusedex-thumb-wrap{ position:relative; width:60px; height:60px; margin:0 auto 6px; }
   .fusedex-name{ font-size:11.5px; font-weight:700; line-height:1.25; margin-top:2px; }
-  .fusedex-tag{ font-size:9px; color:var(--ink-soft); margin-top:2px; }
-  .fusedex-effect{ font-size:9px; color:var(--rare); font-weight:700; margin-top:2px; line-height:1.3; }
+  .fusedex-tag{ font-size:10px; color:var(--ink-soft); margin-top:2px; }
+  .fusedex-effect{ font-size:10px; color:var(--rare); font-weight:700; margin-top:2px; line-height:1.3; }
   .effect-summary{
     font-size:11px; color:var(--ink-soft); background:var(--common-bg); border-radius:10px;
     padding:8px 12px; margin-bottom:12px; font-weight:700; line-height:1.5;
@@ -491,11 +503,24 @@
   .settings-hint{ font-size:11px; color:var(--ink-soft); margin-bottom:10px; line-height:1.5; }
   .settings-row{ display:flex; align-items:center; gap:12px; }
   .vol-wrap{ flex:1; display:flex; align-items:center; gap:8px; }
-  .vol-wrap input[type="range"]{ flex:1; accent-color:var(--chili); }
-  .vol-wrap span{ font-size:11.5px; font-weight:700; color:var(--ink-soft); width:38px; text-align:right; }
+  .vol-wrap input[type="range"]{
+    flex:1; -webkit-appearance:none; appearance:none; height:10px; border-radius:999px;
+    background:var(--line); outline:none; touch-action:manipulation;
+  }
+  .vol-wrap input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none; width:22px; height:22px; border-radius:50%;
+    background:var(--chili); border:3px solid #fff; box-shadow:0 2px 6px rgba(43,36,32,0.35);
+    cursor:pointer; margin-top:0;
+  }
+  .vol-wrap input[type="range"]::-moz-range-thumb{
+    width:22px; height:22px; border-radius:50%; background:var(--chili); border:3px solid #fff;
+    box-shadow:0 2px 6px rgba(43,36,32,0.35); cursor:pointer;
+  }
+  .vol-wrap input[type="range"]::-moz-range-track{ height:10px; border-radius:999px; background:var(--line); }
+  .vol-wrap span{ font-size:12px; font-weight:700; color:var(--ink-soft); width:38px; text-align:right; font-variant-numeric:tabular-nums; }
   .code-row{ display:flex; gap:8px; }
   .code-row input[type="text"]{
-    flex:1; border:1.5px solid var(--line); border-radius:10px; padding:9px 12px; font-size:13px;
+    flex:1; border:1.5px solid var(--line); border-radius:10px; padding:10px 12px; font-size:16px;
     font-family:'Noto Sans KR'; background:#fff; color:var(--ink); min-width:0;
   }
   .code-row input[type="text"]:focus{ outline:none; border-color:var(--bamboo); }
@@ -520,7 +545,7 @@
     font-size:12.5px; color:var(--ink-soft); margin-bottom:12px;
   }
   #saveCodeOutput{
-    width:100%; border:1.5px solid var(--line); border-radius:10px; padding:10px 12px; font-size:11px;
+    width:100%; border:1.5px solid var(--line); border-radius:10px; padding:10px 12px; font-size:12.5px;
     font-family:monospace; resize:none; background:var(--common-bg); color:var(--ink); word-break:break-all;
     margin-bottom:8px;
   }
@@ -551,8 +576,8 @@
   .reveal10-item.coin-bonus{ background:var(--legend-bg); border-color:var(--gold); }
   .reveal10-item.coin-bonus .reveal10-thumb-wrap{ color:var(--gold); display:flex; align-items:center; justify-content:center; }
   .reveal10-thumb-wrap{ position:relative; width:44px; height:44px; margin:0 auto 4px; }
-  .reveal10-name{ font-size:9.5px; font-weight:700; line-height:1.15; margin-top:3px; }
-  .reveal10-tag{ font-size:8.5px; font-weight:700; border-radius:999px; padding:1px 6px; display:inline-block; margin-top:3px; }
+  .reveal10-name{ font-size:10.5px; font-weight:700; line-height:1.2; margin-top:3px; }
+  .reveal10-tag{ font-size:9.5px; font-weight:700; border-radius:999px; padding:2px 7px; display:inline-block; margin-top:3px; }
   .reveal10-summary{ font-size:12px; color:var(--ink-soft); font-weight:700; text-align:center; line-height:1.5; }
   .stage-clear-title{ font-size:24px; margin-bottom:4px; color:var(--chili); }
 
@@ -565,6 +590,63 @@
   @keyframes toastOut{ to{ opacity:0; transform:translateY(-8px);} }
 
   .footer-note{ text-align:center; font-size:10.5px; color:var(--ink-soft); margin-top:16px; opacity:0.8; }
+
+ 
+
+  /* ---------- Tutorial (tab-by-tab) ---------- */
+  .tutorial-backdrop{
+    position:fixed; inset:0; z-index:85;
+    background:transparent;
+    opacity:0; pointer-events:none;
+    transition:opacity .2s ease;
+  }
+  .tutorial-backdrop.show{ opacity:1; pointer-events:auto; }
+  .tutorial-spotlight{
+    position:fixed; z-index:86;
+    border-radius:16px;
+    box-shadow:0 0 0 9999px rgba(43,36,32,0.45);
+    pointer-events:none;
+    transition:top .25s ease, left .25s ease, width .25s ease, height .25s ease;
+  }
+  .tutorial-bubble{
+    position:fixed; z-index:87;
+    left:50%; transform:translateX(-50%);
+    bottom:calc(78px + env(safe-area-inset-bottom));
+    width:min(calc(100% - 28px), 380px);
+    background:var(--paper);
+    border:1.5px solid var(--line);
+    border-radius:18px;
+    padding:16px 16px 12px;
+    box-shadow:0 12px 36px rgba(43,36,32,0.22);
+    opacity:0; pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease;
+  }
+  .tutorial-bubble.show{
+    opacity:1; pointer-events:auto;
+    transform:translateX(-50%) translateY(-4px);
+  }
+  .tutorial-bubble h3{
+    font-family:'Jua','Noto Sans KR',sans-serif;
+    font-size:16px; margin:0 0 6px; color:var(--ink);
+  }
+  .tutorial-bubble p{
+    font-size:12.5px; line-height:1.55; color:var(--ink-soft);
+    margin:0 0 12px;
+  }
+  .tutorial-bubble .tutorial-actions{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
+  .tutorial-bubble .tutorial-ok{
+    flex:1; min-height:38px; font-size:13px;
+  }
+  .tutorial-skip{
+    background:none; border:none; padding:4px 6px;
+    font-size:10.5px; color:var(--ink-soft); cursor:pointer;
+    text-decoration:underline; text-underline-offset:2px;
+    font-family:'Noto Sans KR'; opacity:0.75;
+    touch-action:manipulation;
+  }
+  .tutorial-skip:hover,.tutorial-skip:focus-visible{ opacity:1; color:var(--ink); }
 
   /* ---------- Bonus Mallangi (random coin bonus popup) ---------- */
   .bonus-mallang{
@@ -696,7 +778,7 @@
   .pg-shop-item{ border:1.5px solid var(--line); border-radius:14px; padding:10px 8px; text-align:center; background:#fff; }
   .pg-shop-emoji{ font-size:32px; margin-bottom:4px; line-height:1; }
   .pg-shop-name{ font-size:12px; font-weight:700; margin-bottom:2px; }
-  .pg-shop-desc{ font-size:9.5px; color:var(--ink-soft); margin-bottom:6px; line-height:1.3; min-height:24px; }
+  .pg-shop-desc{ font-size:10.5px; color:var(--ink-soft); margin-bottom:6px; line-height:1.3; min-height:26px; }
   .pg-shop-count{ font-size:10px; color:var(--ink-soft); margin-bottom:6px; }
   .pg-shop-item .btn{ width:100%; padding:6px 4px; font-size:11.5px; display:inline-flex; align-items:center; justify-content:center; gap:3px; }
 
@@ -707,10 +789,22 @@
   }
 
   @media (max-width:420px){
-    .brand h1{ font-size:18px; }
-    .stat-pill{ font-size:12px; padding:5px 10px 5px 7px; }
+    .stat-pill{ padding:5px 9px 5px 7px; }
     .basket{ width:190px; height:170px; }
     .dumpling-wrap img{ width:140px; height:140px; }
+  }
+
+  /* 아주 좁은 화면(구형 소형 스마트폰 등)에서 상단 바가 줄바꿈되거나
+     찜통 캐릭터가 화면을 꽉 채우지 않도록 한 단계 더 압축 */
+  @media (max-width:360px){
+    .topbar{ gap:6px; }
+    .brand .sub{ display:none; }
+    .stat-pill{ padding:5px 7px 5px 6px; gap:4px; }
+    .stat-pill svg{ width:15px; height:15px; }
+    .basket{ width:168px; height:150px; }
+    .dumpling-wrap img{ width:126px; height:126px; }
+    .hero-backdrop{ width:158px; height:158px; }
+    .stage-strip .st-num{ font-size:22px; padding:2px 9px; }
   }
 </style>
 </head>
@@ -750,7 +844,7 @@
     </div>
     <div class="basket">
       <div class="basket-ring"></div>
-      <div class="dumpling-wrap" id="dumplingBtn">
+      <div class="dumpling-wrap" id="dumplingBtn" role="button" tabindex="0" aria-label="만두를 눌러 코인 모으기">
         <div class="hero-backdrop"></div>
         <img id="dumplingImg" class="blend-photo" src="https://i5.walmartimages.com/seo/Giant-Dumpling-Squishy-4-6-10-Inch-Squishy-Dumpling-Squishy-Large-Valentines-Day-Jumbo-Dumplings-Bun-with-Face-for-Adults_f6ca411e-a7d0-4648-961b-116074a8bda7.ea10b42887a7517ce46c5cfac6d2a6b1.jpeg" alt="만두">
         <div class="hero-fruit-overlay" id="heroFruitOverlay"></div>
@@ -761,16 +855,16 @@
     <div class="hero-hint" id="equippedLabel" style="font-weight:700; color:var(--ink);"></div>
   </div>
 
-  <div class="tabs" id="tabs">
-    <button class="tab-btn active" data-tab="gacha"></button>
-    <button class="tab-btn" data-tab="playground"></button>
-    <button class="tab-btn" data-tab="dex"></button>
-    <button class="tab-btn" data-tab="fuse"></button>
-    <button class="tab-btn" data-tab="fusedex"></button>
-    <button class="tab-btn" data-tab="settings"></button>
+  <div class="tabs" id="tabs" role="tablist" aria-label="게임 메뉴">
+    <button class="tab-btn active" data-tab="gacha" role="tab" aria-selected="true" aria-controls="panel" id="tab-gacha"></button>
+    <button class="tab-btn" data-tab="playground" role="tab" aria-selected="false" aria-controls="panel" id="tab-playground"></button>
+    <button class="tab-btn" data-tab="dex" role="tab" aria-selected="false" aria-controls="panel" id="tab-dex"></button>
+    <button class="tab-btn" data-tab="fuse" role="tab" aria-selected="false" aria-controls="panel" id="tab-fuse"></button>
+    <button class="tab-btn" data-tab="fusedex" role="tab" aria-selected="false" aria-controls="panel" id="tab-fusedex"></button>
+    <button class="tab-btn" data-tab="settings" role="tab" aria-selected="false" aria-controls="panel" id="tab-settings"></button>
   </div>
 
-  <div class="panel" id="panel"></div>
+  <div class="panel" id="panel" role="tabpanel" aria-labelledby="tab-gacha" tabindex="-1"></div>
 
   <div class="footer-note">Made By Unvul, Just For Fun. (unvul-coders)</div>
 </div>
@@ -781,7 +875,7 @@
   <div class="bonus-mallang-tag">TAP!</div>
 </div>
 
-<div class="overlay" id="revealOverlay">
+<div class="overlay" id="revealOverlay" role="dialog" aria-modal="true" aria-labelledby="revealName">
   <div class="modal-card" id="revealCard">
     <button class="modal-close" id="revealClose"></button>
     <div class="reveal-ring" id="revealRing">
@@ -823,9 +917,9 @@
   </div>
 </div>
 
-<div class="overlay" id="stageClearOverlay">
+<div class="overlay" id="stageClearOverlay" role="dialog" aria-modal="true" aria-labelledby="stageClearHeading">
   <div class="modal-card">
-    <div class="stage-clear-title">단계 완료!</div>
+    <div class="stage-clear-title" id="stageClearHeading">단계 완료!</div>
     <div id="stageClearBody" style="font-size:13px; color:var(--ink-soft); line-height:1.6;"></div>
     <button class="btn btn-primary" id="stageClearOk" style="margin-top:16px; width:100%;">다음 단계로</button>
   </div>
@@ -841,7 +935,18 @@
   </div>
 </div>
 
-<div class="toast-wrap" id="toastWrap"></div>
+<div class="toast-wrap" id="toastWrap" aria-live="polite" aria-atomic="true"></div>
+
+<div class="tutorial-backdrop" id="tutorialBackdrop" hidden aria-hidden="true"></div>
+<div class="tutorial-spotlight" id="tutorialSpotlight" hidden aria-hidden="true"></div>
+<div class="tutorial-bubble" id="tutorialBubble" role="dialog" aria-modal="true" aria-labelledby="tutorialTitle" aria-describedby="tutorialBody" hidden>
+  <h3 id="tutorialTitle"></h3>
+  <p id="tutorialBody"></p>
+  <div class="tutorial-actions">
+    <button type="button" class="btn btn-primary tutorial-ok" id="tutorialOk">알겠어요</button>
+    <button type="button" class="tutorial-skip" id="tutorialSkip">건너뛰기</button>
+  </div>
+</div>
 
 <script>
 /* ================= 모바일: 스크롤/확대 방지 ================= */
@@ -2038,8 +2143,14 @@ function renderHeader(){
 
 function renderTabs(){
   document.querySelectorAll('.tab-btn').forEach(btn=>{
-    btn.classList.toggle('active', btn.dataset.tab===state.activeTab);
+    const active = btn.dataset.tab===state.activeTab;
+    btn.classList.toggle('active', active);
+    btn.setAttribute('aria-selected', active ? 'true' : 'false');
+    btn.tabIndex = active ? 0 : -1;
   });
+  const panel = document.getElementById('panel');
+  const tabEl = document.getElementById('tab-'+state.activeTab);
+  if(panel && tabEl) panel.setAttribute('aria-labelledby', tabEl.id);
 }
 
 function renderGachaPanel(){
@@ -2970,19 +3081,25 @@ function renderSettingsPanel(){
     '</div>'+
   '</div>'+
   '<div class="settings-section">'+
-    '<div class="settings-title">코드 입력</div>'+
+    '<div class="settings-title" id="settingsCodeTitle">코드 입력</div>'+
     '<div class="settings-hint">이벤트 코드나 아래에서 만든 세이브 코드를 입력하세요</div>'+
     '<div class="code-row">'+
-      '<input type="text" id="codeInput" placeholder="코드를 입력하세요" autocomplete="off">'+
+      '<label for="codeInput" class="sr-only">이벤트 또는 세이브 코드</label>'+
+      '<input type="text" id="codeInput" placeholder="코드를 입력하세요" autocomplete="off" aria-labelledby="settingsCodeTitle">'+
       '<button class="btn btn-primary" id="btnSubmitCode">사용</button>'+
     '</div>'+
   '</div>'+
   '<div class="settings-section">'+
-    '<div class="settings-title">세이브 코드</div>'+
+    '<div class="settings-title" id="settingsSaveTitle">세이브 코드</div>'+
     '<div class="settings-hint">코드를 생성해 복사해두면, 나중에(또는 다른 기기에서) 위 입력란에 붙여넣어 진행 상황을 불러올 수 있어요</div>'+
     '<button class="btn btn-outline" id="btnGenerateSave" style="width:100%; margin-bottom:8px;">세이브 코드 생성</button>'+
-    '<textarea id="saveCodeOutput" readonly rows="3" placeholder="여기에 코드가 표시됩니다"></textarea>'+
+    '<label for="saveCodeOutput" class="sr-only">생성된 세이브 코드</label>'+
+    '<textarea id="saveCodeOutput" readonly rows="3" placeholder="여기에 코드가 표시됩니다" aria-labelledby="settingsSaveTitle"></textarea>'+
     '<button class="btn btn-outline" id="btnCopySave" style="width:100%;">복사하기</button>'+
+  '</div>'+
+  '<div class="settings-section">'+
+    '<div class="settings-title">도움말</div>'+
+    '<button class="btn btn-outline" id="btnReplayTutorial" style="width:100%;">튜토리얼 다시 보기</button>'+
   '</div>';
 }
 
@@ -3159,6 +3276,7 @@ function attachPanelEvents(){
     if(byId('codeInput')) byId('codeInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') submitCode(); });
     if(byId('btnGenerateSave')) byId('btnGenerateSave').onclick = generateSaveCode;
     if(byId('btnCopySave')) byId('btnCopySave').onclick = copySaveCode;
+    if(byId('btnReplayTutorial')) byId('btnReplayTutorial').onclick = resetTutorial;
   }
 }
 
@@ -3166,7 +3284,187 @@ function renderAll(){
   renderHeader();
   renderTabs();
   renderPanel();
+  queueTutorialCheck();
 }
+
+/* ================= TUTORIAL (탭 이동 시 순차 안내) ================= */
+const TUTORIAL_STORAGE_KEY = 'mandu_tutorial_seen';
+const TUTORIAL_SKIP_KEY = 'mandu_tutorial_skipped';
+let tutorialPendingStep = null;
+let tutorialVisible = false;
+
+function isMobileSaveHint(){
+  return window.matchMedia('(pointer: coarse)').matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+const TUTORIAL_STEPS = {
+  hero: {
+    target:'#dumplingBtn',
+    title:'만두를 눌러 코인 모으기',
+    body:'화면 위 만두를 누르면 코인이 쌓여요. 코인으로 뽑기를 할 수 있으니, 먼저 만두를 몇 번 눌러보세요!'
+  },
+  gacha: {
+    target:'#tab-gacha',
+    title:'뽑기 탭',
+    body:'코인·티켓으로 새 말랑이를 뽑을 수 있어요. 중복이 나오면 마일리지가 쌓이고, 마일리지로 티켓을 만들 수도 있어요.'
+  },
+  playground: {
+    target:'#tab-playground',
+    title:'놀이터 탭',
+    body:'뽑은 말랑이를 놀이터에 배치하고, 가구를 사서 꾸며보세요. 말랑이가 가구를 사용하면 선물을 받을 수 있어요.'
+  },
+  dex: {
+    target:'#tab-dex',
+    title:'도감 탭',
+    body:'모은 말랑이를 도감에서 확인하고, 장착하면 만두 클릭 수익이 올라가요. 단계별로 도감을 채워 나가보세요.'
+  },
+  fuse: {
+    target:'#tab-fuse',
+    title:'퓨즈 탭',
+    body:'같은 종류의 말랑이를 모아 퓨즈(합성)하면 새로운 스킨을 만들 수 있어요. 단계를 클리어하는 핵심이에요!'
+  },
+  fusedex: {
+    target:'#tab-fusedex',
+    title:'스킨 탭',
+    body:'퓨즈로 만든 스킨과 이벤트 스킨을 모아보세요. 마음에 드는 스킨을 장착하면 만두 모습이 바뀌어요.'
+  },
+  settings: {
+    target:'#panel',
+    title:'세이브 & 불러오기',
+    getBody(){
+      if(isMobileSaveHint()){
+        return '이 게임은 자동 저장이 없어요. 설정 탭에서 「세이브 코드 생성」→ 코드를 길게 눌러 복사해 메모장 등에 보관하세요. 불러올 때는 위 「코드 입력」란에 붙여넣고 「사용」을 누르면 됩니다.';
+      }
+      return '이 게임은 자동 저장이 없어요. 설정 탭에서 「세이브 코드 생성」→ 「복사하기」로 코드를 저장해 두세요. 불러올 때는 「코드 입력」란에 붙여넣고 「사용」 또는 Enter를 누르면 진행 상황이 복원됩니다.';
+    }
+  }
+};
+
+function tutorialSkipped(){ return localStorage.getItem(TUTORIAL_SKIP_KEY)==='1'; }
+function getTutorialSeen(){
+  try{ return new Set(JSON.parse(localStorage.getItem(TUTORIAL_STORAGE_KEY)||'[]')); }
+  catch(e){ return new Set(); }
+}
+function saveTutorialSeen(set){
+  localStorage.setItem(TUTORIAL_STORAGE_KEY, JSON.stringify([...set]));
+}
+function markTutorialSeen(key){
+  const seen = getTutorialSeen();
+  seen.add(key);
+  saveTutorialSeen(seen);
+}
+
+function hideTutorial(){
+  tutorialVisible = false;
+  tutorialPendingStep = null;
+  ['tutorialBubble','tutorialBackdrop','tutorialSpotlight'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.classList.remove('show');
+    el.hidden = true;
+    el.setAttribute('aria-hidden','true');
+  });
+}
+
+function positionTutorialSpotlight(targetEl){
+  const spot = document.getElementById('tutorialSpotlight');
+  if(!spot || !targetEl) return;
+  const rect = targetEl.getBoundingClientRect();
+  const pad = targetEl.id==='dumplingBtn' ? 8 : 6;
+  spot.style.top = (rect.top - pad)+'px';
+  spot.style.left = (rect.left - pad)+'px';
+  spot.style.width = (rect.width + pad*2)+'px';
+  spot.style.height = (rect.height + pad*2)+'px';
+  spot.hidden = false;
+  spot.setAttribute('aria-hidden','false');
+}
+
+function showTutorialStep(key){
+  if(tutorialSkipped()) return;
+  const step = TUTORIAL_STEPS[key];
+  if(!step) return;
+  const seen = getTutorialSeen();
+  if(seen.has(key)) return;
+
+  const targetEl = document.querySelector(step.target);
+  if(!targetEl) return;
+
+  const bubble = document.getElementById('tutorialBubble');
+  const backdrop = document.getElementById('tutorialBackdrop');
+  if(!bubble || !backdrop) return;
+
+  document.getElementById('tutorialTitle').textContent = step.title;
+  document.getElementById('tutorialBody').textContent = typeof step.getBody==='function' ? step.getBody() : step.body;
+
+  tutorialVisible = true;
+  tutorialPendingStep = key;
+
+  backdrop.hidden = false;
+  backdrop.setAttribute('aria-hidden','false');
+  backdrop.classList.add('show');
+
+  positionTutorialSpotlight(targetEl);
+
+  bubble.hidden = false;
+  bubble.setAttribute('aria-hidden','false');
+  bubble.classList.add('show');
+
+  requestAnimationFrame(()=> document.getElementById('tutorialOk')?.focus());
+}
+
+function dismissTutorialStep(){
+  if(!tutorialPendingStep) return hideTutorial();
+  markTutorialSeen(tutorialPendingStep);
+  const finished = tutorialPendingStep;
+  hideTutorial();
+  if(finished==='hero' && !getTutorialSeen().has('gacha') && state.activeTab==='gacha'){
+    setTimeout(()=> showTutorialStep('gacha'), 280);
+  }
+}
+
+function skipAllTutorial(){
+  localStorage.setItem(TUTORIAL_SKIP_KEY,'1');
+  hideTutorial();
+  toast('튜토리얼을 건너뛰었어요. 설정에서 다시 볼 수 있어요');
+}
+
+function resetTutorial(){
+  localStorage.removeItem(TUTORIAL_SKIP_KEY);
+  localStorage.removeItem(TUTORIAL_STORAGE_KEY);
+  hideTutorial();
+  toast('튜토리얼을 다시 시작합니다');
+  setTimeout(()=> showTutorialStep('hero'), 200);
+}
+
+function queueTutorialCheck(){
+  if(tutorialSkipped() || tutorialVisible) return;
+  requestAnimationFrame(()=>{
+    if(tutorialSkipped() || tutorialVisible) return;
+    if(!getTutorialSeen().has('hero')){
+      showTutorialStep('hero');
+      return;
+    }
+    const tabKey = state.activeTab;
+    if(TUTORIAL_STEPS[tabKey] && !getTutorialSeen().has(tabKey)){
+      showTutorialStep(tabKey);
+    }
+  });
+}
+
+document.getElementById('tutorialOk').onclick = dismissTutorialStep;
+document.getElementById('tutorialSkip').onclick = skipAllTutorial;
+document.getElementById('tutorialBackdrop').onclick = dismissTutorialStep;
+document.getElementById('tutorialBubble').addEventListener('keydown', (e)=>{
+  if(e.key==='Escape') skipAllTutorial();
+});
+function repositionTutorialIfVisible(){
+  if(!tutorialVisible || !tutorialPendingStep) return;
+  const step = TUTORIAL_STEPS[tutorialPendingStep];
+  const targetEl = step ? document.querySelector(step.target) : null;
+  if(targetEl) positionTutorialSpotlight(targetEl);
+}
+window.addEventListener('resize', repositionTutorialIfVisible);
+document.getElementById('app')?.addEventListener('scroll', repositionTutorialIfVisible, {passive:true});
 
 /* ================= REVEAL / MODALS ================= */
 function showReveal(type, result){
@@ -3266,7 +3564,16 @@ function spawnFloat(x, y, text, crit){
   setTimeout(()=> span.remove(), 950);
 }
 
-dumplingBtn.addEventListener('click', (e)=>{
+dumplingBtn.addEventListener('click', (e)=> handleDumplingTap(e.clientX, e.clientY));
+dumplingBtn.addEventListener('keydown', (e)=>{
+  if(e.key==='Enter' || e.key===' '){
+    e.preventDefault();
+    const rect = dumplingBtn.getBoundingClientRect();
+    handleDumplingTap(rect.left + rect.width/2, rect.top + rect.height/2);
+  }
+});
+
+function handleDumplingTap(clientX, clientY){
   ensureAudio();
   const crit = Math.random() < 0.1;
   const base = baseClickValue();
@@ -3280,8 +3587,8 @@ dumplingBtn.addEventListener('click', (e)=>{
   playPop(crit ? 1.6 : (eq && eq.rarity==='legendary' ? 1.25 : eq && eq.rarity==='rare' ? 1.12 : 1), clickMascot);
 
   const rect = dumplingBtn.getBoundingClientRect();
-  const x = (e.clientX!==undefined ? e.clientX - rect.left : rect.width/2) - 10;
-  const y = (e.clientY!==undefined ? e.clientY - rect.top : rect.height/2) - 10;
+  const x = (clientX!==undefined ? clientX - rect.left : rect.width/2) - 10;
+  const y = (clientY!==undefined ? clientY - rect.top : rect.height/2) - 10;
   spawnFloat(x, y, '+'+fmt(gain), crit);
 
   dumplingImg.classList.remove('squish');
@@ -3289,9 +3596,8 @@ dumplingBtn.addEventListener('click', (e)=>{
   dumplingImg.classList.add('squish');
 
   renderHeader();
-  // keep gacha button enabled-state fresh if visible
   if(state.activeTab==='gacha') renderPanel();
-});
+}
 
 /* Reflect the currently equipped (clickable) dumpling on the hero image */
 function tintHero(){
@@ -3332,6 +3638,20 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     state.activeTab = btn.dataset.tab;
     state.gachaMenuOpen = false;
     renderAll();
+  });
+  btn.addEventListener('keydown', (e)=>{
+    const tabs = [...document.querySelectorAll('.tab-btn')];
+    const idx = tabs.indexOf(btn);
+    let next = -1;
+    if(e.key==='ArrowRight') next = (idx+1) % tabs.length;
+    else if(e.key==='ArrowLeft') next = (idx-1+tabs.length) % tabs.length;
+    else if(e.key==='Home') next = 0;
+    else if(e.key==='End') next = tabs.length-1;
+    if(next >= 0){
+      e.preventDefault();
+      tabs[next].focus();
+      tabs[next].click();
+    }
   });
 });
 
